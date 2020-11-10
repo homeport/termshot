@@ -1,0 +1,4 @@
+tmp
+binaries
+internal/img/font-*.go
+**/*.coverprofile

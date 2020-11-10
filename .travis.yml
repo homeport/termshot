@@ -1,0 +1,21 @@
+---
+language: go
+go:
+- 1.15.x
+
+cache:
+  directories:
+  - $GOPATH/pkg/mod
+
+install:
+- curl --silent --location https://goo.gl/g1CpPX | bash -s v1.3.0
+- sudo apt-get update && sudo apt-get install -y go-bindata
+
+script:
+- export GO111MODULE=on
+- make test
+
+after_success:
+- for FILE in $(find . -type f -name "*.coverprofile" 2>/dev/null); do echo >> $FILE; done
+- gover . coverage.txt
+- bash <(curl -s https://codecov.io/bash)
