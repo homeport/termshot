@@ -104,7 +104,9 @@ window including all terminal colors and text decorations.
 			}
 		}
 
-		scaffold.AddContent(string(bytes))
+		if err := scaffold.AddContent(string(bytes)); err != nil {
+			return err
+		}
 
 		return scaffold.SavePNG("out.png")
 	},
