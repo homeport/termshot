@@ -241,6 +241,23 @@ func (s *Scaffold) SavePNG(path string) error {
 			dc.SetFontFace(s.regular)
 		}
 
+		str := string(cr.Symbol)
+		w, h := dc.MeasureString(str)
+
+		// background color
+		switch cr.Settings & 0x02 {
+		case 2:
+			dc.SetRGB255(
+				int((cr.Settings>>32)&0xFF),
+				int((cr.Settings>>40)&0xFF),
+				int((cr.Settings>>48)&0xFF),
+			)
+
+			dc.DrawRectangle(x, y-h+12, w, h)
+			dc.Fill()
+		}
+
+		// foreground color
 		switch cr.Settings & 0x01 {
 		case 1:
 			dc.SetRGB255(
@@ -252,9 +269,6 @@ func (s *Scaffold) SavePNG(path string) error {
 		default:
 			dc.SetColor(s.defaultForegroundColor)
 		}
-
-		str := string(cr.Symbol)
-		w, h := dc.MeasureString(str)
 
 		switch str {
 		case "\n":
