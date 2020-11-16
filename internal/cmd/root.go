@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -63,20 +64,20 @@ window including all terminal colors and text decorations.
 			return cmd.Usage()
 		}
 
-		scaffold := img.NewImageCreator()
+		var buf bytes.Buffer
 
 		// Prepend command line arguments to output content
 		if includeCommand, err := cmd.Flags().GetBool("include-command"); err == nil && includeCommand {
-			scaffold.AddContent(bunt.Sprintf(
-				"Lime{➜} DimGray{%s}\n",
-				strings.Join(args, " ")),
-			)
+			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
 		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
 		if err != nil {
 			return err
 		}
+
+		buf.Write(bytes)
+		fmt.Printf("output=%#v\n", buf.String())
 
 		// Allow manual override of command output content
 		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit {
@@ -87,7 +88,7 @@ window including all terminal colors and text decorations.
 
 			defer os.Remove(tmpFile.Name())
 
-			ioutil.WriteFile(tmpFile.Name(), bytes, os.FileMode(0644))
+			ioutil.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644))
 
 			editor := os.Getenv("EDITOR")
 			if len(editor) == 0 {
@@ -98,13 +99,17 @@ window including all terminal colors and text decorations.
 				return err
 			}
 
-			bytes, err = ioutil.ReadFile(tmpFile.Name())
+			bytes, err := ioutil.ReadFile(tmpFile.Name())
 			if err != nil {
 				return err
 			}
+
+			buf.Reset()
+			buf.Write(bytes)
 		}
 
-		if err := scaffold.AddContent(string(bytes)); err != nil {
+		var scaffold = img.NewImageCreator()
+		if err := scaffold.AddContent(buf.String()); err != nil {
 			return err
 		}
 
