@@ -42,6 +42,8 @@ const (
 type Scaffold struct {
 	content bunt.String
 
+	factor float64
+
 	columns int
 	rows    int
 
@@ -50,11 +52,11 @@ type Scaffold struct {
 	drawShadow      bool
 	shadowBaseColor string
 	shadowRadius    uint8
-	shadowOffsetX   int
-	shadowOffsetY   int
+	shadowOffsetX   float64
+	shadowOffsetY   float64
 
-	padding int
-	margin  int
+	padding float64
+	margin  float64
 
 	regular     font.Face
 	bold        font.Face
@@ -71,28 +73,31 @@ func NewImageCreator() Scaffold {
 		return font
 	}
 
-	cols, rows := term.GetTerminalSize()
+	f := 2.0
 
 	fontRegular := loadFont("Hack-Regular.ttf")
 	fontBold := loadFont("Hack-Bold.ttf")
 	fontItalic := loadFont("Hack-Italic.ttf")
 	fontBoldItalic := loadFont("Hack-BoldItalic.ttf")
-	fontFaceOptions := &truetype.Options{Size: 48, DPI: 144}
+	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
+	cols, rows := term.GetTerminalSize()
 	return Scaffold{
 		defaultForegroundColor: bunt.LightGray,
+
+		factor: f,
 
 		columns: cols,
 		rows:    rows,
 
-		margin:  196,
-		padding: 96,
+		margin:  f * 48,
+		padding: f * 24,
 
 		drawShadow:      true,
 		shadowBaseColor: "#10101066",
-		shadowRadius:    64,
-		shadowOffsetX:   64,
-		shadowOffsetY:   64,
+		shadowRadius:    uint8(math.Min(f*16, 255)),
+		shadowOffsetX:   f * 16,
+		shadowOffsetY:   f * 16,
 
 		regular:     truetype.NewFace(fontRegular, fontFaceOptions),
 		bold:        truetype.NewFace(fontBold, fontFaceOptions),
@@ -156,10 +161,12 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 }
 
 func (s *Scaffold) SavePNG(path string) error {
-	const (
-		corner   = 24
-		radius   = 36
-		distance = 100
+	var f = func(value float64) float64 { return s.factor * value }
+
+	var (
+		corner   = f(6)
+		radius   = f(9)
+		distance = f(25)
 	)
 
 	contentWidth, contentHeight := s.measureContent()
@@ -168,12 +175,12 @@ func (s *Scaffold) SavePNG(path string) error {
 	// content will be rendered
 	contentWidth = math.Max(contentWidth, 3*distance+3*radius)
 
-	marginX, marginY := float64(s.margin), float64(s.margin)
-	paddingX, paddingY := float64(s.padding), float64(s.padding)
+	marginX, marginY := s.margin, s.margin
+	paddingX, paddingY := s.padding, s.padding
 
 	xOffset := marginX
 	yOffset := marginY
-	titleOffset := 160.0
+	titleOffset := f(40)
 
 	width := contentWidth + 2*marginX + 2*paddingX
 	height := contentHeight + 2*marginY + 2*paddingY + titleOffset
@@ -183,12 +190,11 @@ func (s *Scaffold) SavePNG(path string) error {
 	// Optional: Apply blurred rounded rectangle to mimic the window shadow
 	//
 	if s.drawShadow {
-		xOffset -= float64(s.shadowOffsetX >> 1)
-		yOffset -= float64(s.shadowOffsetY >> 1)
+		xOffset -= s.shadowOffsetX / 2
+		yOffset -= s.shadowOffsetY / 2
 
 		bc := gg.NewContext(int(width), int(height))
-
-		bc.DrawRoundedRectangle(xOffset+float64(s.shadowOffsetX), yOffset+float64(s.shadowOffsetY), width-2*marginX, height-2*marginY, corner)
+		bc.DrawRoundedRectangle(xOffset+s.shadowOffsetX, yOffset+s.shadowOffsetY, width-2*marginX, height-2*marginY, corner)
 		bc.SetHexColor(s.shadowBaseColor)
 		bc.Fill()
 
@@ -214,11 +220,11 @@ func (s *Scaffold) SavePNG(path string) error {
 
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
 	dc.SetHexColor("#404040")
-	dc.SetLineWidth(4)
+	dc.SetLineWidth(f(1))
 	dc.Stroke()
 
 	for i, color := range []string{red, yellow, green} {
-		dc.DrawCircle(xOffset+paddingX+float64(i*distance)+16, yOffset+paddingY+16, radius)
+		dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
 		dc.SetHexColor(color)
 		dc.Fill()
 	}
@@ -286,8 +292,8 @@ func (s *Scaffold) SavePNG(path string) error {
 		// There seems to be no font face based way to do an underlined
 		// string, therefore manually draw a line under each character
 		if cr.Settings&0x1C == 16 {
-			dc.DrawLine(x, y+16, x+w, y+16)
-			dc.SetLineWidth(4)
+			dc.DrawLine(x, y+f(4), x+w, y+f(4))
+			dc.SetLineWidth(f(1))
 			dc.Stroke()
 		}
 
