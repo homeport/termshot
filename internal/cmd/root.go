@@ -77,7 +77,6 @@ window including all terminal colors and text decorations.
 		}
 
 		buf.Write(bytes)
-		fmt.Printf("output=%#v\n", buf.String())
 
 		// Allow manual override of command output content
 		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit {
