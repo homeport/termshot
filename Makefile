@@ -18,12 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-version := $(shell git describe --tags --abbrev=0 2>/dev/null || (git rev-parse HEAD 2>/dev/null | cut -c-8))
 sources := $(wildcard cmd/*/*.go internal/*/*.go)
 
 .PHONY: clean
 clean:
-	@rm -rf tmp binaries internal/img/font-hack.go
+	@rm -rf tmp dist internal/img/font-hack.go
 	@go clean -i -cache $(shell go list ./...)
 
 tmp/hack/ttf:
@@ -40,22 +39,6 @@ internal/img/font-hack.go: tmp/hack/ttf
 	  -o internal/img/font-hack.go \
 	  tmp/hack/ttf/
 
-binaries/termshot-linux-amd64: internal/img/font-hack.go $(sources)
-	@/bin/sh -c "echo '\n\033[1mCompiling GNU/Linux version ...\033[0m'"
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-	  -tags netgo \
-	  -ldflags='-s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version=$(version)' \
-	  -o binaries/termshot-linux-amd64 \
-	  cmd/termshot/main.go
-
-binaries/termshot-darwin-amd64: internal/img/font-hack.go $(sources)
-	@/bin/sh -c "echo '\n\033[1mCompiling macOS version ...\033[0m'"
-	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build \
-	  -tags netgo \
-	  -ldflags='-s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version=$(version)' \
-	  -o binaries/termshot-darwin-amd64 \
-	  cmd/termshot/main.go
-
 .PHONY: test
 test: internal/img/font-hack.go $(sources)
 	ginkgo \
@@ -70,8 +53,3 @@ test: internal/img/font-hack.go $(sources)
 	  -race \
 	  -trace \
 	  -cover
-
-.PHONY: build
-build: binaries/termshot-linux-amd64 binaries/termshot-darwin-amd64
-	@/bin/sh -c "echo '\n\033[1mSHA sum of compiled binaries:\033[0m'"
-	@shasum -a256 binaries/termshot-linux-amd64 binaries/termshot-darwin-amd64

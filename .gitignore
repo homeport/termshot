@@ -1,4 +1,4 @@
 tmp
-binaries
+dist
 internal/img/font-*.go
 **/*.coverprofile

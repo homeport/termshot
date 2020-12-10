@@ -1,0 +1,41 @@
+---
+before:
+  hooks:
+  - go mod download
+  - go get -u github.com/jteeuwen/go-bindata/...
+  - make internal/img/font-hack.go
+
+builds:
+  - env:
+    - CGO_ENABLED=0
+    goos:
+    - linux
+    - darwin
+    goarch:
+    - amd64
+    - arm64
+    main: ./cmd/termshot/main.go
+    flags:
+    - -tags
+    - netgo
+    ldflags:
+    - -s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version={{.Version}}
+
+archives:
+- replacements:
+    darwin: darwin
+    linux: linux
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  skip: false
+  sort: ""
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
