@@ -23,7 +23,8 @@ sources := $(wildcard cmd/*/*.go internal/*/*.go)
 
 .PHONY: clean
 clean:
-	@rm -rf tmp
+	@rm -rf tmp binaries internal/img/font-hack.go
+	@go clean -i -cache $(shell go list ./...)
 
 tmp/hack/ttf:
 	@mkdir -p tmp/hack
