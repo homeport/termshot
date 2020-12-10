@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/homeport/termshot.svg)](https://github.com/homeport/termshot/blob/main/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/homeport/termshot)](https://goreportcard.com/report/github.com/homeport/termshot)
-[![Build Status](https://travis-ci.com/homeport/termshot.svg?branch=main)](https://travis-ci.com/homeport/termshot)
+![Build](https://github.com/homeport/termshot/workflows/Build/badge.svg)
 [![Codecov](https://img.shields.io/codecov/c/github/homeport/termshot/main.svg)](https://codecov.io/gh/homeport/termshot)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/homeport/termshot)](https://pkg.go.dev/github.com/homeport/termshot)
 [![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
