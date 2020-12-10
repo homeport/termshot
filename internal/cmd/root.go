@@ -108,7 +108,7 @@ window including all terminal colors and text decorations.
 		}
 
 		var scaffold = img.NewImageCreator()
-		if err := scaffold.AddContent(buf.String()); err != nil {
+		if err := scaffold.AddContent(&buf); err != nil {
 			return err
 		}
 

@@ -22,6 +22,7 @@ package img
 
 import (
 	"image/color"
+	"io"
 	"math"
 	"strings"
 
@@ -116,8 +117,8 @@ func (s *Scaffold) SetFontFaceItalic(face font.Face) { s.italic = face }
 
 func (s *Scaffold) SetFontFaceBoldItalic(face font.Face) { s.boldItalic = face }
 
-func (s *Scaffold) AddContent(content string) error {
-	tmp, err := bunt.ParseString(content)
+func (s *Scaffold) AddContent(in io.Reader) error {
+	tmp, err := bunt.ParseStream(in)
 	if err != nil {
 		return err
 	}

@@ -24,6 +24,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/gonvenience/bunt"
 	. "github.com/onsi/ginkgo"
@@ -51,7 +52,7 @@ var _ = Describe("Creating images", func() {
 		It("should create a PNG file based on provided input", func() {
 			withTempFile(func(name string) {
 				scaffold := NewImageCreator()
-				scaffold.AddContent("foobar")
+				scaffold.AddContent(strings.NewReader("foobar"))
 
 				err := scaffold.SavePNG(name)
 				Expect(err).ToNot(HaveOccurred())
@@ -69,7 +70,7 @@ var _ = Describe("Creating images", func() {
 				bunt.Fprintf(&buf, "\tMintCream{MintCream}\n")
 
 				scaffold := NewImageCreator()
-				scaffold.AddContent(buf.String())
+				scaffold.AddContent(&buf)
 
 				err := scaffold.SavePNG(name)
 				Expect(err).ToNot(HaveOccurred())
