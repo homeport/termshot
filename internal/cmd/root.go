@@ -30,6 +30,7 @@ import (
 
 	"github.com/gonvenience/bunt"
 	"github.com/gonvenience/neat"
+	"github.com/gonvenience/wrap"
 	"github.com/homeport/termshot/internal/img"
 	"github.com/homeport/termshot/internal/ptexec"
 	"github.com/spf13/cobra"
@@ -39,13 +40,15 @@ import (
 var version string
 
 var rootCmd = &cobra.Command{
-	Use:   fmt.Sprintf("%s [flags] [--] command [command flags] [command arguments] [...]", executableName()),
+	Use:   fmt.Sprintf("%s [%s flags] [--] command [command flags] [command arguments] [...]", executableName(), executableName()),
 	Short: "Creates a screenshot of terminal command output",
 	Long: `Executes the provided command as-is with all flags and arguments in a pseudo
 terminal and captures the generated output. The result is printed as it was
 produced. Additionally, an image will be rendered in a lookalike terminal
 window including all terminal colors and text decorations.
 `,
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if showVersion, err := cmd.Flags().GetBool("version"); showVersion && err == nil {
 			if len(version) == 0 {
@@ -67,7 +70,7 @@ window including all terminal colors and text decorations.
 		var buf bytes.Buffer
 
 		// Prepend command line arguments to output content
-		if includeCommand, err := cmd.Flags().GetBool("include-command"); err == nil && includeCommand {
+		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
@@ -118,8 +121,37 @@ window including all terminal colors and text decorations.
 
 // Execute is the main entry point into the CLI code
 func Execute() {
+	rootCmd.SetFlagErrorFunc(func(c *cobra.Command, e error) error {
+		return wrap.Errorf(
+			fmt.Errorf("Issue with %v\n\nIn order to differentiate between program flags and command flags,\nuse '--' before the command so that all flags before the separator\nbelong to %s, while all others are used for the command.\n\n%s", e, executableName(), c.UsageString()),
+			"Unknown %s flag",
+			executableName(),
+		)
+	})
+
 	if err := rootCmd.Execute(); err != nil {
-		neat.PrintError(err)
+		var headline string
+		var content bytes.Buffer
+
+		switch e := err.(type) {
+		case wrap.ContextError:
+			headline = e.Context()
+			content.WriteString(e.Cause().Error())
+
+		default:
+			headline = "Error occurred"
+			content.WriteString(e.Error())
+		}
+
+		neat.Box(
+			os.Stderr,
+			headline,
+			&content,
+			neat.HeadlineColor(bunt.OrangeRed),
+			neat.ContentColor(bunt.LightCoral),
+			neat.NoLineWrap(),
+		)
+
 		os.Exit(1)
 	}
 }
@@ -133,7 +165,8 @@ func executableName() string {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolP("version", "v", false, "show version")
-	rootCmd.PersistentFlags().BoolP("include-command", "i", false, "include command in screenshot")
-	rootCmd.PersistentFlags().BoolP("edit", "e", false, "use system default editor to change content before the screenshot")
+	rootCmd.Flags().SortFlags = false
+	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
+	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
+	rootCmd.Flags().BoolP("version", "v", false, "show version")
 }
