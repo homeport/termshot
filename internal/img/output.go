@@ -286,6 +286,9 @@ func (s *Scaffold) SavePNG(path string) error {
 		case "\t":
 			x += w * float64(s.tabSpaces)
 			continue
+
+		case "✗": // mitigate issue #1 by replacing it with a similar character
+			str = "×"
 		}
 
 		dc.DrawString(str, x, y)
