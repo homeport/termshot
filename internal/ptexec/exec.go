@@ -32,7 +32,7 @@ import (
 
 	"github.com/creack/pty"
 	"github.com/gonvenience/wrap"
-	"golang.org/x/crypto/ssh/terminal"
+	terminal "golang.org/x/term"
 )
 
 // RunCommandInPseudoTerminal runs the provided program with the given

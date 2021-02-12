@@ -14,6 +14,7 @@ require (
 	github.com/onsi/ginkgo v1.15.0
 	github.com/onsi/gomega v1.10.5
 	github.com/spf13/cobra v1.1.1
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6
+	golang.org/x/term v0.0.0-20201117132131-f5c789dd3221
 )
