@@ -1,38 +1,37 @@
-# termshot
+# termshot [![License](https://img.shields.io/github/license/homeport/termshot.svg)](https://github.com/homeport/termshot/blob/main/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/homeport/termshot)](https://goreportcard.com/report/github.com/homeport/termshot) ![Build](https://github.com/homeport/termshot/workflows/Build/badge.svg) [![Codecov](https://img.shields.io/codecov/c/github/homeport/termshot/main.svg)](https://codecov.io/gh/homeport/termshot) [![PkgGoDev](https://pkg.go.dev/badge/github.com/homeport/termshot)](https://pkg.go.dev/github.com/homeport/termshot) [![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
 
-[![License](https://img.shields.io/github/license/homeport/termshot.svg)](https://github.com/homeport/termshot/blob/main/LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/homeport/termshot)](https://goreportcard.com/report/github.com/homeport/termshot)
-![Build](https://github.com/homeport/termshot/workflows/Build/badge.svg)
-[![Codecov](https://img.shields.io/codecov/c/github/homeport/termshot/main.svg)](https://codecov.io/gh/homeport/termshot)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/homeport/termshot)](https://pkg.go.dev/github.com/homeport/termshot)
-[![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
+Terminal screenshot tool, which takes the console output and renders an output image that resembles a user interface window. The idea is similar to what [carbon.now.sh](https://carbon.now.sh/), [instaco.de](http://instaco.de/), or [codekeep.io/screenshot](https://codekeep.io/screenshot) do. Instead of applying syntax highlight based on a programming language, `termshot` is using the ANSI escape codes of the program output. The result is clean screenshot (or recreation) of your terminal output. If you want, it has an option to edit the program output before creating the screenshot. This way you can remove unwanted sensitive content. Like `time`, `watch`, or `perf`, just place `termshot` before the command and you are set.
 
-The `termshot` tool creates an image that resembles a user interface window similar to what [Carbon](https://carbon.now.sh/), [Instacode](http://instaco.de/), or [codekeep.io/screenshot](https://codekeep.io/screenshot) do for code. However, it works completely offline and takes its input directly from a terminal command output. The ANSI escape codes for Select Graphic Rendition are used for text emphasis (bold, italic, and underline) and of course for terminal colors. Like `time`, `watch`, or `perf`, just place `termshot` before the command.
+For example, `termshot --show-cmd -- lolcat -f <(figlet -f big foobar)` will create a screenshot which looks like this: ![example](.docs/images/example.png?raw=true "example screenshot")
 
-For example, create a screenshot of the command execution of [`dyff`](https://github.com/homeport/dyff), which relies heavily on terminal colors for text highlighting:
+## Installation
 
-```text
-$ termshot dyff between https://raw.githubusercontent.com/cloudfoundry/cf-deployment/v1.10.0/cf-deployment.yml https://raw.githubusercontent.com/cloudfoundry/cf-deployment/v1.20.0/cf-deployment.yml
-     _        __  __
-   _| |_   _ / _|/ _|  between https://raw.githubusercontent.com/cloudfoundry/cf-deployment/v1.10.0/cf-deployment.yml
- / _' | | | | |_| |_       and https://raw.githubusercontent.com/cloudfoundry/cf-deployment/v1.20.0/cf-deployment.yml
-| (_| | |_| |  _|  _|
- \__,_|\__, |_| |_|   returned 80 differences
-        |___/
+### macOS
 
-manifest_version
-  ± value change
-    - v1.10.0
-    + v1.20.0
+Use `homebrew` to install `termshot`: `brew install homeport/tap/termshot`
 
-instance_groups.database.jobs.mysql.properties.cf_mysql.mysql.port
-  ± value change
-    - 33306
-    + 13306
+### Binaries
 
-[...]
-```
+The [releases](https://github.com/homeport/termshot/releases/) section has pre-compiled binaries for Darwin, and Linux.
 
-This will create a _(fake)_ screenshot which looks like this: ![example](.docs/images/example.png?raw=true "example screenshot")
+## Notes
 
-_Please note:_ This project is work in progress. Although a lot of the ANSI sequences can be parsed, there are definitely commands in existence that create output that cannot be parsed correctly, yet. Also, commands that reset the cursor position are known to create issues.
+- Since both `termshot` and your command can have command line flags, it is recommended to use `--` to separate them.
+
+  ```sh
+  termshot --edit -- tool --apply --force
+  ```
+
+- If you want to run a command and pipe the output into another, you have to use quotes to make this clear on the command line.
+
+  ```sh
+  termshot --show-cmd -- "figlet foobar | lolcat"
+  ```
+
+- In order to work, `termshot` uses a pseudo terminal for the command to be executed. This means you can invoke a fully interactive shell and capture the entire output. The screenshot is created once you terminate the shell.
+
+  ```sh
+  termshot /bin/zsh
+  ```
+
+- _Please note:_ This project is work in progress. Although a lot of the ANSI sequences can be parsed, there are definitely commands in existence that create output that cannot be parsed correctly, yet. Also, commands that reset the cursor position are known to create issues.
