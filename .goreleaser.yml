@@ -2,7 +2,7 @@
 before:
   hooks:
   - go mod download
-  - go get -u github.com/jteeuwen/go-bindata/...
+  - go get -u github.com/kevinburke/go-bindata/...
   - make internal/img/font-hack.go
 
 builds:
