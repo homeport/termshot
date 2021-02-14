@@ -93,8 +93,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}()
 
 	var buf bytes.Buffer
-	_, err = io.Copy(io.MultiWriter(os.Stdout, &buf), pt)
-	if err != nil {
+	if err = copy(io.MultiWriter(os.Stdout, &buf), pt); err != nil {
 		return nil, err
 	}
 
@@ -106,4 +105,23 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}
 
 	return buf.Bytes(), nil
+}
+
+func copy(dst io.Writer, src io.Reader) error {
+	_, err := io.Copy(dst, src)
+	if err != nil {
+		switch terr := err.(type) {
+		case *os.PathError:
+			// Workaround for issue https://github.com/creack/pty/issues/100
+			// where on Linux systems it can happen that the pseudo terminal
+			// process finishes while termshot is trying to read. Assuming
+			// that the content is already read, this error is treated the
+			// same as if it would be an EOF.
+			if terr.Op == "read" && terr.Path == "/dev/ptmx" {
+				return nil
+			}
+		}
+	}
+
+	return err
 }
