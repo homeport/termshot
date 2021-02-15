@@ -68,18 +68,12 @@ type Scaffold struct {
 }
 
 func NewImageCreator() Scaffold {
-	var loadFont = func(assetName string) *truetype.Font {
-		bytes, _ := Asset(assetName)
-		font, _ := truetype.Parse(bytes)
-		return font
-	}
-
 	f := 2.0
 
-	fontRegular := loadFont("Hack-Regular.ttf")
-	fontBold := loadFont("Hack-Bold.ttf")
-	fontItalic := loadFont("Hack-Italic.ttf")
-	fontBoldItalic := loadFont("Hack-BoldItalic.ttf")
+	fontRegular, _ := truetype.Parse(MustAsset("Hack-Regular.ttf"))
+	fontBold, _ := truetype.Parse(MustAsset("Hack-Bold.ttf"))
+	fontItalic, _ := truetype.Parse(MustAsset("Hack-Italic.ttf"))
+	fontBoldItalic, _ := truetype.Parse(MustAsset("Hack-BoldItalic.ttf"))
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	cols, rows := term.GetTerminalSize()
