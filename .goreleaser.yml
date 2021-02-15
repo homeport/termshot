@@ -41,3 +41,26 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+
+brews:
+  - tap:
+      owner: homeport
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+
+    url_template: "https://github.com/homeport/termshot/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    download_strategy: CurlDownloadStrategy.
+
+    # Git author used to commit to the repository.
+    # Defaults are shown.
+    commit_author:
+      name: GoReleaser Bot
+      email: goreleaser@carlosbecker.com
+
+    folder: HomebrewFormula
+    homepage: "https://github.com/homeport/termshot"
+    description: "Creates screenshots based on terminal command output."
+    license: "MIT"
+    skip_upload: false
+    test: |
+      system "#{bin}/termshot --version"
