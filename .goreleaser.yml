@@ -1,7 +1,6 @@
 ---
 before:
   hooks:
-  - go mod download
   - go get -u github.com/kevinburke/go-bindata/...
   - make internal/img/font-hack.go
 
@@ -13,8 +12,6 @@ builds:
     - darwin
     goarch:
     - amd64
-    - arm64
-    - arm
     main: ./cmd/termshot/main.go
     flags:
     - -tags
@@ -49,7 +46,7 @@ brews:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
 
     url_template: "https://github.com/homeport/termshot/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    download_strategy: CurlDownloadStrategy.
+    download_strategy: CurlDownloadStrategy
 
     # Git author used to commit to the repository.
     # Defaults are shown.
