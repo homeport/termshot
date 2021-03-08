@@ -12,7 +12,7 @@ require (
 	github.com/gonvenience/term v1.0.1
 	github.com/gonvenience/wrap v1.1.0
 	github.com/onsi/ginkgo v1.15.0
-	github.com/onsi/gomega v1.10.5
+	github.com/onsi/gomega v1.11.0
 	github.com/spf13/cobra v1.1.1
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6
