@@ -26,21 +26,18 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gonvenience/bunt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	. "github.com/gonvenience/bunt"
 	. "github.com/homeport/termshot/internal/img"
 )
 
 var _ = Describe("Creating images", func() {
 	Context("Use scaffold to create PNG file", func() {
 		var withTempFile = func(f func(name string)) {
-			tmpColorState, tmpTrueColorState := bunt.ColorSetting, bunt.TrueColorSetting
-			bunt.ColorSetting, bunt.TrueColorSetting = bunt.ON, bunt.ON
-			defer func() {
-				bunt.ColorSetting, bunt.TrueColorSetting = tmpColorState, tmpTrueColorState
-			}()
+			SetColorSettings(ON, ON)
+			defer SetColorSettings(AUTO, AUTO)
 
 			file, err := ioutil.TempFile("", "termshot.png")
 			Expect(err).ToNot(HaveOccurred())
@@ -62,12 +59,12 @@ var _ = Describe("Creating images", func() {
 		It("should create a PNG file based on provided input with ANSI sequences", func() {
 			withTempFile(func(name string) {
 				var buf bytes.Buffer
-				bunt.Fprintf(&buf, "Text with emphasis, like *bold*, _italic_, _*bold/italic*_ or ~underline~.\n\n")
-				bunt.Fprintf(&buf, "Colors:\n")
-				bunt.Fprintf(&buf, "\tRed{Red}\n")
-				bunt.Fprintf(&buf, "\tGreen{Green}\n")
-				bunt.Fprintf(&buf, "\tBlue{Blue}\n")
-				bunt.Fprintf(&buf, "\tMintCream{MintCream}\n")
+				Fprintf(&buf, "Text with emphasis, like *bold*, _italic_, _*bold/italic*_ or ~underline~.\n\n")
+				Fprintf(&buf, "Colors:\n")
+				Fprintf(&buf, "\tRed{Red}\n")
+				Fprintf(&buf, "\tGreen{Green}\n")
+				Fprintf(&buf, "\tBlue{Blue}\n")
+				Fprintf(&buf, "\tMintCream{MintCream}\n")
 
 				scaffold := NewImageCreator()
 				scaffold.AddContent(&buf)
