@@ -281,7 +281,7 @@ func (s *Scaffold) SavePNG(path string) error {
 			x += w * float64(s.tabSpaces)
 			continue
 
-		case "✗": // mitigate issue #1 by replacing it with a similar character
+		case "✗", "ˣ": // mitigate issue #1 by replacing it with a similar character
 			str = "×"
 		}
 
