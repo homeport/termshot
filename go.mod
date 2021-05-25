@@ -1,6 +1,6 @@
 module github.com/homeport/termshot
 
-go 1.15
+go 1.16
 
 require (
 	github.com/creack/pty v1.1.11
@@ -14,7 +14,6 @@ require (
 	github.com/onsi/ginkgo v1.16.1
 	github.com/onsi/gomega v1.11.0
 	github.com/spf13/cobra v1.1.3
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6
 	golang.org/x/term v0.0.0-20201117132131-f5c789dd3221
 )

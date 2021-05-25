@@ -17,18 +17,27 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.x
+    - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.15
+        go-version: 1.16
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
+    - name: Install Tools
+      run: |
+        pushd "$(mktemp -d)"
+        go get github.com/gordonklaus/ineffassign
+        go get golang.org/x/lint/golint
+        go get github.com/client9/misspell/cmd/misspell
+        go get honnef.co/go/tools/cmd/staticcheck
+        go get github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega/...
+        go get github.com/kevinburke/go-bindata/...
+        popd
+
     - name: Get dependencies
       run: |
-        go mod download
-        go get -u github.com/kevinburke/go-bindata/...
         make internal/img/font-hack.go
 
     - name: Build
@@ -37,6 +46,4 @@ jobs:
 
     - name: Test
       run: |
-        go get github.com/onsi/ginkgo/ginkgo
-        go get github.com/onsi/gomega/...
         make test
