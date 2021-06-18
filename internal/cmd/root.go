@@ -115,7 +115,18 @@ window including all terminal colors and text decorations.
 			return err
 		}
 
-		return scaffold.SavePNG("out.png")
+		filename, err := cmd.Flags().GetString("filename")
+		if filename == "" || err != nil {
+			fmt.Fprintf(os.Stderr, "failed to read filename from command-line, defaulting to out.png")
+			filename = "out.png"
+		}
+
+		extension := filepath.Ext(filename)
+		if extension != ".png" {
+			return fmt.Errorf("file extension '%s' of filename '%s' is not supported, only png is supported", extension, filename)
+		}
+
+		return scaffold.SavePNG(filename)
 	},
 }
 
@@ -169,4 +180,5 @@ func init() {
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
 	rootCmd.Flags().BoolP("version", "v", false, "show version")
+	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
 }
