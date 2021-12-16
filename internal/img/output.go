@@ -194,13 +194,13 @@ func (s *Scaffold) SavePNG(path string) error {
 		bc.Fill()
 
 		var done = make(chan struct{}, s.shadowRadius)
-		shadow := stackblur.Process(
+		shadow, err := stackblur.Run(
 			bc.Image(),
-			uint32(width),
-			uint32(height),
 			uint32(s.shadowRadius),
-			done,
 		)
+		if err != nil {
+			return err
+		}
 
 		<-done
 		dc.DrawImage(shadow, 0, 0)
