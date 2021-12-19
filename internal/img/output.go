@@ -193,7 +193,6 @@ func (s *Scaffold) SavePNG(path string) error {
 		bc.SetHexColor(s.shadowBaseColor)
 		bc.Fill()
 
-		var done = make(chan struct{}, s.shadowRadius)
 		shadow, err := stackblur.Run(
 			bc.Image(),
 			uint32(s.shadowRadius),
@@ -202,7 +201,6 @@ func (s *Scaffold) SavePNG(path string) error {
 			return err
 		}
 
-		<-done
 		dc.DrawImage(shadow, 0, 0)
 	}
 
