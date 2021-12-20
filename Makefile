@@ -20,27 +20,15 @@
 
 sources := $(wildcard cmd/*/*.go internal/*/*.go)
 
+.PHONY: all
+all: test
+
 .PHONY: clean
 clean:
-	@rm -rf tmp dist internal/img/font-hack.go
 	@go clean -i -cache $(shell go list ./...)
 
-tmp/hack/ttf:
-	@mkdir -p tmp/hack
-	@/bin/sh -c "echo '\n\033[1mDownloading default font for embedding ...\033[0m'"
-	curl --fail --silent --location https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.tar.gz | tar -xzf - -C tmp/hack
-
-internal/img/font-hack.go: tmp/hack/ttf
-	@/bin/sh -c "echo '\n\033[1mCreating embedded fonts in Go source ...\033[0m'"
-	go-bindata \
-	  -pkg img \
-	  -nomemcopy \
-	  -prefix tmp/hack/ttf \
-	  -o internal/img/font-hack.go \
-	  tmp/hack/ttf/
-
 .PHONY: test
-test: internal/img/font-hack.go $(sources)
+test: $(sources)
 	ginkgo \
 	  -r \
 	  -v \

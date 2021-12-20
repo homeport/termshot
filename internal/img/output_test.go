@@ -49,9 +49,11 @@ var _ = Describe("Creating images", func() {
 		It("should create a PNG file based on provided input", func() {
 			withTempFile(func(name string) {
 				scaffold := NewImageCreator()
-				scaffold.AddContent(strings.NewReader("foobar"))
 
-				err := scaffold.SavePNG(name)
+				err := scaffold.AddContent(strings.NewReader("foobar"))
+				Expect(err).ToNot(HaveOccurred())
+
+				err = scaffold.SavePNG(name)
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})
@@ -59,17 +61,19 @@ var _ = Describe("Creating images", func() {
 		It("should create a PNG file based on provided input with ANSI sequences", func() {
 			withTempFile(func(name string) {
 				var buf bytes.Buffer
-				Fprintf(&buf, "Text with emphasis, like *bold*, _italic_, _*bold/italic*_ or ~underline~.\n\n")
-				Fprintf(&buf, "Colors:\n")
-				Fprintf(&buf, "\tRed{Red}\n")
-				Fprintf(&buf, "\tGreen{Green}\n")
-				Fprintf(&buf, "\tBlue{Blue}\n")
-				Fprintf(&buf, "\tMintCream{MintCream}\n")
+				_, _ = Fprintf(&buf, "Text with emphasis, like *bold*, _italic_, _*bold/italic*_ or ~underline~.\n\n")
+				_, _ = Fprintf(&buf, "Colors:\n")
+				_, _ = Fprintf(&buf, "\tRed{Red}\n")
+				_, _ = Fprintf(&buf, "\tGreen{Green}\n")
+				_, _ = Fprintf(&buf, "\tBlue{Blue}\n")
+				_, _ = Fprintf(&buf, "\tMintCream{MintCream}\n")
 
 				scaffold := NewImageCreator()
-				scaffold.AddContent(&buf)
 
-				err := scaffold.SavePNG(name)
+				err := scaffold.AddContent(&buf)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = scaffold.SavePNG(name)
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})

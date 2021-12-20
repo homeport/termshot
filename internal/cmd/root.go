@@ -90,7 +90,9 @@ window including all terminal colors and text decorations.
 
 			defer os.Remove(tmpFile.Name())
 
-			ioutil.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644))
+			if err := ioutil.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644)); err != nil {
+				return err
+			}
 
 			editor := os.Getenv("EDITOR")
 			if len(editor) == 0 {
