@@ -31,6 +31,7 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/gonvenience/bunt"
 	"github.com/gonvenience/term"
+	"github.com/homeport/termshot/internal/fonts"
 	"golang.org/x/image/font"
 )
 
@@ -70,10 +71,10 @@ type Scaffold struct {
 func NewImageCreator() Scaffold {
 	f := 2.0
 
-	fontRegular, _ := truetype.Parse(MustAsset("Hack-Regular.ttf"))
-	fontBold, _ := truetype.Parse(MustAsset("Hack-Bold.ttf"))
-	fontItalic, _ := truetype.Parse(MustAsset("Hack-Italic.ttf"))
-	fontBoldItalic, _ := truetype.Parse(MustAsset("Hack-BoldItalic.ttf"))
+	fontRegular, _ := truetype.Parse(fonts.HackRegular)
+	fontBold, _ := truetype.Parse(fonts.HackBold)
+	fontItalic, _ := truetype.Parse(fonts.HackItalic)
+	fontBoldItalic, _ := truetype.Parse(fonts.HackBoldItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	cols, rows := term.GetTerminalSize()
