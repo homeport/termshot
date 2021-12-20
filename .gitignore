@@ -2,4 +2,3 @@ tmp
 dist
 internal/img/font-*.go
 **/*.coverprofile
-cmd/termshot
