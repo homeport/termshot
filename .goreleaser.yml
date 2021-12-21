@@ -27,7 +27,7 @@ snapshot:
 
 changelog:
   skip: false
-  sort: ""
+  use: github-native
   filters:
     exclude:
     - '^Bump'
