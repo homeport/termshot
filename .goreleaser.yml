@@ -1,9 +1,4 @@
 ---
-before:
-  hooks:
-  - go get -u github.com/kevinburke/go-bindata/...
-  - make internal/img/font-hack.go
-
 builds:
   - env:
     - CGO_ENABLED=0
