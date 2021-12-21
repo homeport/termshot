@@ -30,8 +30,7 @@ changelog:
   sort: ""
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+    - '^Bump'
 
 brews:
   - tap:
