@@ -7,7 +7,7 @@ require (
 	github.com/esimov/stackblur-go v1.0.2
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/gonvenience/bunt v1.3.2
+	github.com/gonvenience/bunt v1.3.3
 	github.com/gonvenience/neat v1.3.7
 	github.com/gonvenience/term v1.0.1
 	github.com/gonvenience/wrap v1.1.1
