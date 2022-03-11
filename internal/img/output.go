@@ -194,10 +194,7 @@ func (s *Scaffold) SavePNG(path string) error {
 		bc.SetHexColor(s.shadowBaseColor)
 		bc.Fill()
 
-		shadow, err := stackblur.Run(
-			bc.Image(),
-			uint32(s.shadowRadius),
-		)
+		shadow, err := stackblur.Process(bc.Image(), uint32(s.shadowRadius))
 		if err != nil {
 			return err
 		}
