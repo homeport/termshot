@@ -12,7 +12,7 @@ require (
 	github.com/gonvenience/term v1.0.2
 	github.com/gonvenience/wrap v1.1.1
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.18.1
+	github.com/onsi/gomega v1.19.0
 	github.com/spf13/cobra v1.4.0
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
@@ -27,7 +27,7 @@ require (
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/net v0.0.0-20220121210141-e204ce36a2ba // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
