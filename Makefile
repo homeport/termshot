@@ -29,15 +29,14 @@ clean:
 
 .PHONY: test
 test: $(sources)
-	ginkgo \
-	  -r \
-	  -v \
-	  -randomizeAllSpecs \
-	  -randomizeSuites \
-	  -failOnPending \
-	  -nodes=4 \
-	  -compilers=2 \
-	  -slowSpecThreshold=30 \
-	  -race \
-	  -trace \
-	  -cover
+	@ginkgo run \
+	  --coverprofile=unit.coverprofile \
+	  --randomize-all \
+	  --randomize-suites \
+	  --fail-on-pending \
+	  --keep-going \
+	  --slow-spec-threshold=4m \
+	  --compilers=2 \
+	  --race \
+	  --trace \
+	  ./...
