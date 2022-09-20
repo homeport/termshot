@@ -68,8 +68,8 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	signal.Notify(ch, syscall.SIGWINCH)
 	go func() {
 		for range ch {
-			if err := pty.InheritSize(os.Stdin, pt); err != nil {
-				errors = append(errors, wrap.Error(err, "error resizing PTY"))
+			if ptyErr := pty.InheritSize(os.Stdin, pt); ptyErr != nil {
+				errors = append(errors, wrap.Error(ptyErr, "error resizing PTY"))
 			}
 		}
 	}()
@@ -87,8 +87,8 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}()
 
 	go func() {
-		if _, err := io.Copy(pt, os.Stdin); err != nil {
-			errors = append(errors, err)
+		if _, copyErr := io.Copy(pt, os.Stdin); copyErr != nil {
+			errors = append(errors, copyErr)
 		}
 	}()
 
@@ -98,7 +98,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}
 
 	if len(errors) > 0 {
-		fmt.Fprintf(os.Stderr, "issues in backgroup tasks:\n")
+		fmt.Fprintf(os.Stderr, "issues in background tasks:\n")
 		for _, err := range errors {
 			fmt.Fprintf(os.Stderr, "- %v\n", err.Error())
 		}

@@ -23,7 +23,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -74,23 +73,23 @@ window including all terminal colors and text decorations.
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
-		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
-		if err != nil {
-			return err
+		bytes, runErr := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
+		if runErr != nil {
+			return runErr
 		}
 
 		buf.Write(bytes)
 
 		// Allow manual override of command output content
 		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit {
-			tmpFile, err := ioutil.TempFile("", executableName())
-			if err != nil {
-				return err
+			tmpFile, tmpErr := os.CreateTemp("", executableName())
+			if tmpErr != nil {
+				return tmpErr
 			}
 
 			defer os.Remove(tmpFile.Name())
 
-			if err := ioutil.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644)); err != nil {
+			if err := os.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644)); err != nil {
 				return err
 			}
 
@@ -103,9 +102,9 @@ window including all terminal colors and text decorations.
 				return err
 			}
 
-			bytes, err := ioutil.ReadFile(tmpFile.Name())
-			if err != nil {
-				return err
+			bytes, tmpErr := os.ReadFile(tmpFile.Name())
+			if tmpErr != nil {
+				return tmpErr
 			}
 
 			buf.Reset()
@@ -117,8 +116,8 @@ window including all terminal colors and text decorations.
 			return err
 		}
 
-		filename, err := cmd.Flags().GetString("filename")
-		if filename == "" || err != nil {
+		filename, runErr := cmd.Flags().GetString("filename")
+		if filename == "" || runErr != nil {
 			fmt.Fprintf(os.Stderr, "failed to read filename from command-line, defaulting to out.png")
 			filename = "out.png"
 		}

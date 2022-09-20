@@ -22,7 +22,6 @@ package img_test
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -39,7 +38,7 @@ var _ = Describe("Creating images", func() {
 			SetColorSettings(ON, ON)
 			defer SetColorSettings(AUTO, AUTO)
 
-			file, err := ioutil.TempFile("", "termshot.png")
+			file, err := os.CreateTemp("", "termshot.png")
 			Expect(err).ToNot(HaveOccurred())
 			defer os.Remove(file.Name())
 
