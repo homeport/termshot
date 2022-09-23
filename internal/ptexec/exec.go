@@ -32,7 +32,8 @@ import (
 
 	"github.com/creack/pty"
 	"github.com/gonvenience/wrap"
-	terminal "golang.org/x/term"
+	"github.com/mattn/go-isatty"
+	"golang.org/x/term"
 )
 
 // RunCommandInPseudoTerminal runs the provided program with the given
@@ -54,40 +55,45 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 		name = "/bin/sh"
 	}
 
+	// Set RAW mode for Stdin
+	if isTerminal(os.Stdin) {
+		oldState, rawErr := term.MakeRaw(int(os.Stdin.Fd()))
+		if rawErr != nil {
+			return nil, wrap.Errorf(rawErr, "failed to enable RAW mode for Stdin")
+		}
+
+		// And make sure to restore the original mode eventually
+		defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }()
+	}
+
 	pt, err := pty.Start(exec.Command(name, args...))
 	if err != nil {
 		return nil, err
 	}
 
-	defer func() {
-		_ = pt.Close()
-	}()
-
 	// Support terminal resizing
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGWINCH)
-	go func() {
-		for range ch {
-			if ptyErr := pty.InheritSize(os.Stdin, pt); ptyErr != nil {
-				errors = append(errors, wrap.Error(ptyErr, "error resizing PTY"))
+	if isTerminal(os.Stdin) {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, syscall.SIGWINCH)
+		go func() {
+			for range ch {
+				if ptyErr := pty.InheritSize(os.Stdin, pt); ptyErr != nil {
+					errors = append(errors, wrap.Error(ptyErr, "error resizing PTY"))
+				}
 			}
-		}
-	}()
-	ch <- syscall.SIGWINCH
+		}()
 
-	// Set RAW mode for stdin
-	oldState, err := terminal.MakeRaw(int(os.Stdin.Fd()))
-	if err != nil {
-		return nil, wrap.Errorf(err, "failed to enable RAW mode for stdin")
+		ch <- syscall.SIGWINCH
+		defer func() {
+			signal.Stop(ch)
+			close(ch)
+		}()
 	}
 
-	// Make sure to restore the original mode
-	defer func() {
-		_ = terminal.Restore(int(os.Stdin.Fd()), oldState)
-	}()
-
 	go func() {
-		if _, copyErr := io.Copy(pt, os.Stdin); copyErr != nil {
+		defer pt.Close()
+		_, copyErr := io.Copy(pt, os.Stdin)
+		if copyErr != nil {
 			errors = append(errors, copyErr)
 		}
 	}()
@@ -124,4 +130,9 @@ func copy(dst io.Writer, src io.Reader) error {
 	}
 
 	return err
+}
+
+func isTerminal(f *os.File) bool {
+	return isatty.IsTerminal(f.Fd()) ||
+		isatty.IsCygwinTerminal(f.Fd())
 }
