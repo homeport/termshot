@@ -1,0 +1,33 @@
+---
+name: golangci-lint
+
+on:
+  push:
+    tags-ignore:
+    - '**'
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18.x
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Build source code
+      run: go build ./...
+
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        only-new-issues: true
