@@ -1,4 +1,11 @@
-# termshot [![License](https://img.shields.io/github/license/homeport/termshot.svg)](https://github.com/homeport/termshot/blob/main/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/homeport/termshot)](https://goreportcard.com/report/github.com/homeport/termshot) ![Build](https://github.com/homeport/termshot/workflows/Build/badge.svg) [![Codecov](https://img.shields.io/codecov/c/github/homeport/termshot/main.svg)](https://codecov.io/gh/homeport/termshot) [![PkgGoDev](https://pkg.go.dev/badge/github.com/homeport/termshot)](https://pkg.go.dev/github.com/homeport/termshot) [![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
+# termshot
+
+[![License](https://img.shields.io/github/license/homeport/termshot.svg)](https://github.com/homeport/termshot/blob/main/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/homeport/termshot)](https://goreportcard.com/report/github.com/homeport/termshot)
+[![Tests](https://github.com/homeport/termshot/workflows/Tests/badge.svg)](https://github.com/homeport/termshot/actions?query=workflow%3A%22Tests%22)
+[![Codecov](https://img.shields.io/codecov/c/github/homeport/termshot/main.svg)](https://codecov.io/gh/homeport/termshot)
+[![Go Reference](https://pkg.go.dev/badge/github.com/homeport/termshot.svg)](https://pkg.go.dev/github.com/homeport/termshot)
+[![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
 
 Terminal screenshot tool, which takes the console output and renders an output image that resembles a user interface window. The idea is similar to what [carbon.now.sh](https://carbon.now.sh/), [instaco.de](http://instaco.de/), or [codekeep.io/screenshot](https://codekeep.io/screenshot) do. Instead of applying syntax highlight based on a programming language, `termshot` is using the ANSI escape codes of the program output. The result is clean screenshot (or recreation) of your terminal output. If you want, it has an option to edit the program output before creating the screenshot. This way you can remove unwanted sensitive content. Like `time`, `watch`, or `perf`, just place `termshot` before the command and you are set.
 

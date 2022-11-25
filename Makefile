@@ -30,13 +30,12 @@ clean:
 
 .PHONY: test
 test: $(sources)
-	@go run github.com/onsi/ginkgo/v2/ginkgo \
+	@ginkgo run \
 	  --coverprofile=unit.coverprofile \
 	  --randomize-all \
 	  --randomize-suites \
 	  --fail-on-pending \
 	  --keep-going \
-	  --slow-spec-threshold=4m \
 	  --compilers=2 \
 	  --race \
 	  --trace \
