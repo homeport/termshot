@@ -111,7 +111,10 @@ window including all terminal colors and text decorations.
 			buf.Write(bytes)
 		}
 
-		var scaffold = img.NewImageCreator()
+		var noShadow, _ = cmd.Flags().GetBool("no-shadow")
+		var noWindow, _ = cmd.Flags().GetBool("no-window")
+		var scaffold = img.NewImageCreator(!noShadow, !noWindow)
+
 		if err := scaffold.AddContent(&buf); err != nil {
 			return err
 		}
@@ -180,6 +183,8 @@ func init() {
 	rootCmd.Flags().SortFlags = false
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
+	rootCmd.Flags().BoolP("no-window", "w", false, "Remove the window border")
+	rootCmd.Flags().BoolP("no-shadow", "s", false, "Remove the shadow effect")
 	rootCmd.Flags().BoolP("version", "v", false, "show version")
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
 }

@@ -47,7 +47,7 @@ var _ = Describe("Creating images", func() {
 
 		It("should create a PNG file based on provided input", func() {
 			withTempFile(func(name string) {
-				scaffold := NewImageCreator()
+				scaffold := NewImageCreator(true, true)
 
 				err := scaffold.AddContent(strings.NewReader("foobar"))
 				Expect(err).ToNot(HaveOccurred())
@@ -67,7 +67,7 @@ var _ = Describe("Creating images", func() {
 				_, _ = Fprintf(&buf, "\tBlue{Blue}\n")
 				_, _ = Fprintf(&buf, "\tMintCream{MintCream}\n")
 
-				scaffold := NewImageCreator()
+				scaffold := NewImageCreator(true, true)
 
 				err := scaffold.AddContent(&buf)
 				Expect(err).ToNot(HaveOccurred())
