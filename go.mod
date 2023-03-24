@@ -12,7 +12,7 @@ require (
 	github.com/gonvenience/term v1.0.2
 	github.com/gonvenience/wrap v1.1.2
 	github.com/mattn/go-isatty v0.0.18
-	github.com/onsi/ginkgo/v2 v2.9.1
+	github.com/onsi/ginkgo/v2 v2.9.2
 	github.com/onsi/gomega v1.27.4
 	github.com/spf13/cobra v1.6.1
 	golang.org/x/image v0.6.0
@@ -21,7 +21,7 @@ require (
 
 require (
 	github.com/go-logr/logr v1.2.3 // indirect
-	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
