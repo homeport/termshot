@@ -7,23 +7,23 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/homeport/termshot.svg)](https://pkg.go.dev/github.com/homeport/termshot)
 [![Release](https://img.shields.io/github/release/homeport/termshot.svg)](https://github.com/homeport/termshot/releases/latest)
 
-Terminal screenshot tool, which takes the console output and renders an output image that resembles a user interface window. The idea is similar to what [carbon.now.sh](https://carbon.now.sh/), [instaco.de](http://instaco.de/), or [codekeep.io/screenshot](https://codekeep.io/screenshot) do. Instead of applying syntax highlight based on a programming language, `termshot` is using the ANSI escape codes of the program output. The result is clean screenshot (or recreation) of your terminal output. If you want, it has an option to edit the program output before creating the screenshot. This way you can remove unwanted sensitive content. Like `time`, `watch`, or `perf`, just place `termshot` before the command and you are set.
-
-For example, `termshot --show-cmd -- lolcat -f <(figlet -f big foobar)` will create a screenshot which looks like this: ![example](.docs/images/example.png?raw=true 'example screenshot')
+Generate beautiful screenshots of your terminal, from your terminal.
 
 ## Installation
 
-### macOS
+To install with Homebrew on macOS or Linux:
 
-Use `homebrew` to install `termshot`: `brew install homeport/tap/termshot`
+```sh
+brew install homeport/tap/termshot
+```
 
-### Binaries
-
-The [releases](https://github.com/homeport/termshot/releases/) section has pre-compiled binaries for Darwin, and Linux.
+See [Releases](https://github.com/homeport/termshot/releases/) for pre-compiled binaries for Darwin and Linux.
 
 ## Usage
 
-Prefix the command you want to screenshot with `termshot -- `. Since both `termshot` and your _target command_ (e.g. `ls`) may accept command line flags, the `--` is used to separate the two.
+This tool reads the console output and renders an output image that resembles a user interface window. It's inspired by some other web-based tools like [carbon.now.sh](https://carbon.now.sh/) and [codekeep.io/screenshot](https://codekeep.io/screenshot). Unlike those tools, `termshot` does not blindly apply syntax highlighting to some provided text; instead it reads the ANSI escape codes ("rich text") logged by most command-line tools and uses it to generate a high-fidelity "screenshot" of your terminal output.
+
+Like `time`, `watch`, or `perf`, just prefix the command you want to screenshot with `termshot -- `.
 
 ```sh
 termshot -- ls -a
@@ -54,7 +54,7 @@ termshot --c -- "ls -a"
 
 ### `--edit`/`-e`
 
-Edit the output before generating the screenshot. This will open the rich text output in the editor configured in `$EDITOR`, using `vi` as a fallback.
+Edit the output before generating the screenshot. This will open the rich text output in the editor configured in `$EDITOR`, using `vi` as a fallback. Use this flag to remove unwanted or sensitive output.
 
 ```sh
 termshot --edit -- "ls -a"
