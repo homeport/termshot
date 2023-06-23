@@ -36,10 +36,10 @@ This will generate an image file called `out.png` in the current directory.
 In some cases—say, if your target command contains _pipes_—there may still be ambiguity, even with `--`. In these cases, wrap your command in double quotes.
 
 ```sh
-termshot -- "ls -a | grep g"
+termshot -- "ls -l | grep go"
 ```
 
-![out](https://github.com/homeport/termshot/assets/3084745/25c8832b-d2a8-433a-8f20-412e7b3c5232)
+![out](https://github.com/homeport/termshot/assets/3084745/5d0dd1ab-820d-46fc-8af7-8a294193c5ca)
 
 ### `--show-cmd`/`-c`
 
