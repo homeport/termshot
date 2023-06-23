@@ -9,6 +9,14 @@
 
 Generate beautiful screenshots of your terminal, from your terminal.
 
+```sh
+termshot --show-cmd -- lolcat -f <(figlet -f big foobar)
+```
+
+This command generates this screenshot:
+
+![example](https://github.com/homeport/termshot/assets/3084745/8ef3a713-70d0-49e3-98e4-e340763dc0b8)
+
 ## Installation
 
 To install with Homebrew on macOS or Linux:
@@ -39,9 +47,9 @@ In some cases—say, if your target command contains _pipes_—there may still b
 termshot -- "ls -l | grep go"
 ```
 
-![out](https://github.com/homeport/termshot/assets/3084745/5d0dd1ab-820d-46fc-8af7-8a294193c5ca)
+![termshot with pipes](https://github.com/homeport/termshot/assets/3084745/5d0dd1ab-820d-46fc-8af7-8a294193c5ca)
 
-### `--show-cmd`/`-c`
+#### `--show-cmd`/`-c`
 
 Include the target command in the screenshot.
 
@@ -50,9 +58,9 @@ termshot --show-cmd -- "ls -a"
 termshot --c -- "ls -a"
 ```
 
-![out](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
+![termshot that shows command](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
 
-### `--edit`/`-e`
+#### `--edit`/`-e`
 
 Edit the output before generating the screenshot. This will open the rich text output in the editor configured in `$EDITOR`, using `vi` as a fallback. Use this flag to remove unwanted or sensitive output.
 
@@ -61,9 +69,7 @@ termshot --edit -- "ls -a"
 termshot -e -- "ls -a"
 ```
 
-![out](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
-
-### `--filename`/`-f`
+#### `--filename`/`-f`
 
 Specify a path where the screenshot should be generated. This can be an absolute path or a relative path; relative paths will be resolved relative to the current working directory.
 
@@ -76,7 +82,7 @@ termshot --filename /Desktop/my-image.png -- "ls -a"
 
 Defaults to `out.png`
 
-### `--version`/`-v`
+#### `--version`/`-v`
 
 Print the version of `termshot` installed.
 
