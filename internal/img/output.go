@@ -51,6 +51,7 @@ type Scaffold struct {
 
 	defaultForegroundColor color.Color
 
+	window		bool
 	drawShadow      bool
 	shadowBaseColor string
 	shadowRadius    uint8
@@ -68,8 +69,13 @@ type Scaffold struct {
 	tabSpaces   int
 }
 
-func NewImageCreator() Scaffold {
+func NewImageCreator(shadow bool, window bool) Scaffold {
 	f := 2.0
+
+	margin := 0.
+	if shadow{
+		margin = f * 48
+	}
 
 	fontRegular, _ := truetype.Parse(fonts.HackRegular)
 	fontBold, _ := truetype.Parse(fonts.HackBold)
@@ -86,10 +92,11 @@ func NewImageCreator() Scaffold {
 		columns: cols,
 		rows:    rows,
 
-		margin:  f * 48,
+		margin:  margin,
 		padding: f * 24,
 
-		drawShadow:      true,
+		window: 	 window,
+		drawShadow:    	 shadow,
 		shadowBaseColor: "#10101066",
 		shadowRadius:    uint8(math.Min(f*16, 255)),
 		shadowOffsetX:   f * 16,
@@ -176,7 +183,11 @@ func (s *Scaffold) SavePNG(path string) error {
 
 	xOffset := marginX
 	yOffset := marginY
-	titleOffset := f(40)
+
+	titleOffset := 0.
+	if s.window{
+		titleOffset = f(40)
+	}
 
 	width := contentWidth + 2*marginX + 2*paddingX
 	height := contentHeight + 2*marginY + 2*paddingY + titleOffset
@@ -214,10 +225,12 @@ func (s *Scaffold) SavePNG(path string) error {
 	dc.SetLineWidth(f(1))
 	dc.Stroke()
 
-	for i, color := range []string{red, yellow, green} {
-		dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
-		dc.SetHexColor(color)
-		dc.Fill()
+	if s.window {
+		for i, color := range []string{red, yellow, green} {
+			dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
+			dc.SetHexColor(color)
+			dc.Fill()
+		}
 	}
 
 	// Apply the actual text into the prepared content area of the window
