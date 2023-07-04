@@ -4,15 +4,14 @@ name: Tests
 on:
   push:
     tags-ignore:
-      - '**'
+    - '**'
     branches:
-      - main
+    - main
   pull_request:
     branches:
-      - main
+    - main
 
 jobs:
-
   build:
     name: Tests
     runs-on: ubuntu-latest
