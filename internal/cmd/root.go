@@ -40,6 +40,9 @@ import (
 // version string will be injected by automation
 var version string
 
+// saveToClipboard function will be implemented by OS specific code
+var saveToClipboard func(img.Scaffold) error
+
 var rootCmd = &cobra.Command{
 	Use:   fmt.Sprintf("%s [%s flags] [--] command [command flags] [command arguments] [...]", executableName(), executableName()),
 	Short: "Creates a screenshot of terminal command output",
@@ -118,8 +121,16 @@ window including all terminal colors and text decorations.
 			return err
 		}
 
-		filename, runErr := cmd.Flags().GetString("filename")
-		if filename == "" || runErr != nil {
+		// save image to clipboard
+		//
+		if toClipboard, err := cmd.Flags().GetBool("clipboard"); err == nil && toClipboard {
+			return saveToClipboard(scaffold)
+		}
+
+		// save image to file
+		//
+		filename, err := cmd.Flags().GetString("filename")
+		if filename == "" || err != nil {
 			fmt.Fprintf(os.Stderr, "failed to read filename from command-line, defaulting to out.png")
 			filename = "out.png"
 		}
@@ -128,7 +139,13 @@ window including all terminal colors and text decorations.
 			return fmt.Errorf("file extension %q of filename %q is not supported, only png is supported", extension, filename)
 		}
 
-		return scaffold.SavePNG(filename)
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("failed to create file: %w", err)
+		}
+
+		defer file.Close()
+		return scaffold.Write(file)
 	},
 }
 
