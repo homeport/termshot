@@ -25,12 +25,12 @@ all: test
 
 .PHONY: clean
 clean:
-	@go clean -i -cache $(shell go list ./...)
-	rm -rf dist *.coverprofile
+	@go clean -i $(shell go list ./...)
+	@rm -rf dist *.coverprofile
 
 .PHONY: test
 test: $(sources)
-	@ginkgo run \
+	go run -mod=mod github.com/onsi/ginkgo/v2/ginkgo run \
 	  --coverprofile=unit.coverprofile \
 	  --randomize-all \
 	  --randomize-suites \
