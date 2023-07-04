@@ -29,5 +29,4 @@ jobs:
 
     - name: Test
       run: |
-        go install -mod=mod github.com/onsi/ginkgo/v2/ginkgo
         make test
