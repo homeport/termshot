@@ -14,11 +14,6 @@ builds:
     ldflags:
     - -s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version={{.Version}}
 
-archives:
-- replacements:
-    darwin: darwin
-    linux: linux
-
 checksum:
   name_template: 'checksums.txt'
 
