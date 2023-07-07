@@ -30,8 +30,10 @@ import (
 	"github.com/gonvenience/bunt"
 	"github.com/gonvenience/neat"
 	"github.com/gonvenience/wrap"
+
 	"github.com/homeport/termshot/internal/img"
 	"github.com/homeport/termshot/internal/ptexec"
+
 	"github.com/spf13/cobra"
 )
 
@@ -73,9 +75,9 @@ window including all terminal colors and text decorations.
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
-		bytes, runErr := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
-		if runErr != nil {
-			return runErr
+		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
+		if err != nil {
+			return err
 		}
 
 		buf.Write(bytes)
@@ -122,9 +124,8 @@ window including all terminal colors and text decorations.
 			filename = "out.png"
 		}
 
-		extension := filepath.Ext(filename)
-		if extension != ".png" {
-			return fmt.Errorf("file extension '%s' of filename '%s' is not supported, only png is supported", extension, filename)
+		if extension := filepath.Ext(filename); extension != ".png" {
+			return fmt.Errorf("file extension %q of filename %q is not supported, only png is supported", extension, filename)
 		}
 
 		return scaffold.SavePNG(filename)
@@ -178,8 +179,14 @@ func executableName() string {
 
 func init() {
 	rootCmd.Flags().SortFlags = false
+
+	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
-	rootCmd.Flags().BoolP("version", "v", false, "show version")
+
+	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
+
+	// internals
+	rootCmd.Flags().BoolP("version", "v", false, "show version")
 }
