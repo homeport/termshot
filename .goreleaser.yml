@@ -28,7 +28,7 @@ changelog:
     - '^Bump'
 
 brews:
-  - tap:
+  - repository:
       owner: homeport
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
