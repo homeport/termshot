@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"markdownlint.config": {
+			"MD033":false
+		}
+	}
+}

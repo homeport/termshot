@@ -75,7 +75,7 @@ window including all terminal colors and text decorations.
 
 		// Prepend command line arguments to output content
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
-			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
+			bunt.Fprintf(&buf, "Lime{$} DimGray{%s}\n\n", strings.Join(args, " "))
 		}
 
 		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
@@ -103,7 +103,7 @@ window including all terminal colors and text decorations.
 				editor = "vi"
 			}
 
-			if _, err := ptexec.RunCommandInPseudoTerminal(editor, tmpFile.Name()); err != nil {
+			if err := ptexec.RunCommand(editor, tmpFile.Name()); err != nil {
 				return err
 			}
 
@@ -144,8 +144,14 @@ window including all terminal colors and text decorations.
 			return fmt.Errorf("failed to create file: %w", err)
 		}
 
+		colNum, err := cmd.Flags().GetInt("width")
+		if err != nil {
+			return fmt.Errorf("failed to get width. %w", err)
+		}
+
 		defer file.Close()
-		return scaffold.Write(file)
+
+		return scaffold.Write(file, colNum)
 	},
 }
 
@@ -200,6 +206,7 @@ func init() {
 	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
+	rootCmd.Flags().IntP("width", "w", 132, "width of screen in chars")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")

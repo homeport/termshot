@@ -70,13 +70,15 @@ type Scaffold struct {
 	tabSpaces   int
 }
 
+var thisColNum int
+
 func NewImageCreator() Scaffold {
 	f := 2.0
 
-	fontRegular, _ := truetype.Parse(fonts.HackRegular)
-	fontBold, _ := truetype.Parse(fonts.HackBold)
-	fontItalic, _ := truetype.Parse(fonts.HackItalic)
-	fontBoldItalic, _ := truetype.Parse(fonts.HackBoldItalic)
+	fontRegular, _ := truetype.Parse(fonts.JetBrainsMonoRegular)
+	fontBold, _ := truetype.Parse(fonts.JetBrainsMonoBold)
+	fontItalic, _ := truetype.Parse(fonts.JetBrainsMonoItalic)
+	fontBoldItalic, _ := truetype.Parse(fonts.JetBrainsMonoBoldItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	cols, rows := term.GetTerminalSize()
@@ -88,10 +90,10 @@ func NewImageCreator() Scaffold {
 		columns: cols,
 		rows:    rows,
 
-		margin:  f * 48,
+		margin:  0, //f * 48,
 		padding: f * 24,
 
-		drawShadow:      true,
+		drawShadow:      false,
 		shadowBaseColor: "#10101066",
 		shadowRadius:    uint8(math.Min(f*16, 255)),
 		shadowOffsetX:   f * 16,
@@ -145,12 +147,14 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 
 	// width, max width of all lines
 	tmpDrawer := &font.Drawer{Face: s.regular}
-	for _, line := range lines {
+	/* for _, line := range lines {
 		advance := tmpDrawer.MeasureString(line)
 		if lineWidth := float64(advance >> 6); lineWidth > width {
 			width = lineWidth
 		}
-	}
+	} */
+
+	width = float64(tmpDrawer.MeasureString(strings.Repeat("a", thisColNum)) >> 6) // TODO 132 chars
 
 	// height, lines times font height and line spacing
 	height = float64(len(lines)) * s.fontHeight() * s.lineSpacing
@@ -162,7 +166,7 @@ func (s *Scaffold) image() (image.Image, error) {
 	var f = func(value float64) float64 { return s.factor * value }
 
 	var (
-		corner   = f(6)
+		corner   = f(12)
 		radius   = f(9)
 		distance = f(25)
 	)
@@ -279,8 +283,6 @@ func (s *Scaffold) image() (image.Image, error) {
 			x += w * float64(s.tabSpaces)
 			continue
 
-		case "✗", "ˣ": // mitigate issue #1 by replacing it with a similar character
-			str = "×"
 		}
 
 		dc.DrawString(str, x, y)
@@ -299,7 +301,8 @@ func (s *Scaffold) image() (image.Image, error) {
 	return dc.Image(), nil
 }
 
-func (s *Scaffold) Write(w io.Writer) error {
+func (s *Scaffold) Write(w io.Writer, colNum int) error {
+	thisColNum = colNum
 	image, err := s.image()
 	if err != nil {
 		return err
