@@ -206,7 +206,7 @@ func init() {
 	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
-	rootCmd.Flags().IntP("width", "w", 132, "width of screen in chars")
+	rootCmd.Flags().IntP("width", "w", 0, "width of screen in chars")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")

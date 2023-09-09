@@ -21,6 +21,7 @@
 package img
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -73,7 +74,7 @@ type Scaffold struct {
 var thisColNum int
 
 func NewImageCreator() Scaffold {
-	f := 2.0
+	f := 1.0
 
 	fontRegular, _ := truetype.Parse(fonts.JetBrainsMonoRegular)
 	fontBold, _ := truetype.Parse(fonts.JetBrainsMonoBold)
@@ -133,6 +134,8 @@ func (s *Scaffold) fontHeight() float64 {
 
 func (s *Scaffold) measureContent() (width float64, height float64) {
 	var tmp = make([]rune, len(s.content))
+	var tmpColNum int
+
 	for i, cr := range s.content {
 		tmp[i] = cr.Symbol
 	}
@@ -145,16 +148,25 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 		"\n",
 	)
 
-	// width, max width of all lines
 	tmpDrawer := &font.Drawer{Face: s.regular}
-	/* for _, line := range lines {
-		advance := tmpDrawer.MeasureString(line)
-		if lineWidth := float64(advance >> 6); lineWidth > width {
-			width = lineWidth
-		}
-	} */
+	if thisColNum < 1 {
 
-	width = float64(tmpDrawer.MeasureString(strings.Repeat("a", thisColNum)) >> 6) // TODO 132 chars
+		// width, max width of all lines
+
+		for _, line := range lines {
+			advance := tmpDrawer.MeasureString(line)
+			if lineWidth := float64(advance >> 6); lineWidth > width {
+				width = lineWidth
+				tmpColNum = bunt.PlainTextLength(line)
+			}
+		}
+		fmt.Printf("scale --width %d\n", tmpColNum)
+	} else {
+
+		// getting from flag
+
+		width = float64(tmpDrawer.MeasureString(strings.Repeat("a", thisColNum)) >> 6)
+	}
 
 	// height, lines times font height and line spacing
 	height = float64(len(lines)) * s.fontHeight() * s.lineSpacing
