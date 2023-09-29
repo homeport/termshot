@@ -73,10 +73,10 @@ type Scaffold struct {
 func NewImageCreator() Scaffold {
 	f := 2.0
 
-	fontRegular, _ := truetype.Parse(fonts.HackRegular)
-	fontBold, _ := truetype.Parse(fonts.HackBold)
-	fontItalic, _ := truetype.Parse(fonts.HackItalic)
-	fontBoldItalic, _ := truetype.Parse(fonts.HackBoldItalic)
+	fontRegular, _ := truetype.Parse(fonts.JetBrainsMonoRegular)
+	fontBold, _ := truetype.Parse(fonts.JetBrainsMonoBold)
+	fontItalic, _ := truetype.Parse(fonts.JetBrainsMonoItalic)
+	fontBoldItalic, _ := truetype.Parse(fonts.JetBrainsMonoBoldItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	cols, rows := term.GetTerminalSize()
