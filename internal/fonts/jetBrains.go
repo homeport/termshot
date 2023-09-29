@@ -22,14 +22,14 @@ package fonts
 
 import _ "embed"
 
-//go:embed Hack-Bold.ttf
-var HackBold []byte
+//go:embed JetBrainsMono-Bold.ttf
+var JetBrainsMonoBold []byte
 
-//go:embed Hack-BoldItalic.ttf
-var HackBoldItalic []byte
+//go:embed JetBrainsMono-BoldItalic.ttf
+var JetBrainsMonoBoldItalic []byte
 
-//go:embed Hack-Italic.ttf
-var HackItalic []byte
+//go:embed JetBrainsMono-Italic.ttf
+var JetBrainsMonoItalic []byte
 
-//go:embed Hack-Regular.ttf
-var HackRegular []byte
+//go:embed JetBrainsMono-Regular.ttf
+var JetBrainsMonoRegular []byte
