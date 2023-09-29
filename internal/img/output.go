@@ -21,6 +21,7 @@
 package img
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -69,6 +70,8 @@ type Scaffold struct {
 	lineSpacing float64
 	tabSpaces   int
 }
+
+var thisColNum int
 
 func NewImageCreator() Scaffold {
 	f := 2.0
@@ -131,6 +134,8 @@ func (s *Scaffold) fontHeight() float64 {
 
 func (s *Scaffold) measureContent() (width float64, height float64) {
 	var tmp = make([]rune, len(s.content))
+	var tmpColNum int
+
 	for i, cr := range s.content {
 		tmp[i] = cr.Symbol
 	}
@@ -145,11 +150,23 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 
 	// width, max width of all lines
 	tmpDrawer := &font.Drawer{Face: s.regular}
-	for _, line := range lines {
-		advance := tmpDrawer.MeasureString(line)
-		if lineWidth := float64(advance >> 6); lineWidth > width {
-			width = lineWidth
+	if thisColNum < 1 {
+
+		// width, max width of all lines
+
+		for _, line := range lines {
+			advance := tmpDrawer.MeasureString(line)
+			if lineWidth := float64(advance >> 6); lineWidth > width {
+				width = lineWidth
+				tmpColNum = bunt.PlainTextLength(line)
+			}
 		}
+		fmt.Printf("scale --width %d\n", tmpColNum)
+	} else {
+
+		// getting from flag
+
+		width = float64(tmpDrawer.MeasureString(strings.Repeat("a", thisColNum)) >> 6)
 	}
 
 	// height, lines times font height and line spacing
@@ -299,7 +316,8 @@ func (s *Scaffold) image() (image.Image, error) {
 	return dc.Image(), nil
 }
 
-func (s *Scaffold) Write(w io.Writer) error {
+func (s *Scaffold) Write(w io.Writer, colNum int) error {
+	thisColNum = colNum
 	image, err := s.image()
 	if err != nil {
 		return err

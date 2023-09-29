@@ -144,8 +144,13 @@ window including all terminal colors and text decorations.
 			return fmt.Errorf("failed to create file: %w", err)
 		}
 
+		colNum, err := cmd.Flags().GetInt("width")
+		if err != nil {
+			return fmt.Errorf("failed to get width. %w", err)
+		}
+
 		defer file.Close()
-		return scaffold.Write(file)
+		return scaffold.Write(file, colNum)
 	},
 }
 
@@ -200,6 +205,7 @@ func init() {
 	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
+	rootCmd.Flags().IntP("width", "w", 0, "width of screen in chars")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
