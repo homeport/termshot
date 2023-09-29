@@ -103,7 +103,7 @@ window including all terminal colors and text decorations.
 				editor = "vi"
 			}
 
-			if _, err := ptexec.RunCommandInPseudoTerminal(editor, tmpFile.Name()); err != nil {
+			if err := ptexec.RunCommand(editor, tmpFile.Name()); err != nil {
 				return err
 			}
 

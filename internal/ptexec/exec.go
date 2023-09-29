@@ -36,6 +36,21 @@ import (
 	"golang.org/x/term"
 )
 
+func RunCommand(name string, args ...string) error {
+
+	cmd := exec.Command("nano", args...)
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error running nano %v. %w", args, err)
+	}
+
+	return nil
+}
+
 // RunCommandInPseudoTerminal runs the provided program with the given
 // arguments in a pseudo terminal (PTY) so tha the behavior is the same
 // if it would be executed in a terminal
