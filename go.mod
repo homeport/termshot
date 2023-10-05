@@ -15,7 +15,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.12.1
 	github.com/onsi/gomega v1.28.0
 	github.com/spf13/cobra v1.7.0
-	golang.org/x/image v0.12.0
+	golang.org/x/image v0.13.0
 	golang.org/x/term v0.12.0
 )
 
