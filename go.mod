@@ -11,7 +11,7 @@ require (
 	github.com/gonvenience/neat v1.3.12
 	github.com/gonvenience/term v1.0.2
 	github.com/gonvenience/wrap v1.2.0
-	github.com/mattn/go-isatty v0.0.19
+	github.com/mattn/go-isatty v0.0.20
 	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/onsi/gomega v1.28.0
 	github.com/spf13/cobra v1.7.0
