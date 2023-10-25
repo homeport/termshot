@@ -152,10 +152,9 @@ window including all terminal colors and text decorations.
 // Execute is the main entry point into the CLI code
 func Execute() {
 	rootCmd.SetFlagErrorFunc(func(c *cobra.Command, e error) error {
-		return wrap.Errorf(
-			fmt.Errorf("issue with %v\n\nIn order to differentiate between program flags and command flags,\nuse '--' before the command so that all flags before the separator\nbelong to %s, while all others are used for the command.\n\n%s", e, executableName(), c.UsageString()),
-			"Unknown %s flag",
+		return fmt.Errorf("Unknown %s flag %w",
 			executableName(),
+			fmt.Errorf("issue with %v\n\nIn order to differentiate between program flags and command flags,\nuse '--' before the command so that all flags before the separator\nbelong to %s, while all others are used for the command.\n\n%s", e, executableName(), c.UsageString()),
 		)
 	})
 
