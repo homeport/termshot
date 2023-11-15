@@ -13,7 +13,7 @@ For example, `termshot --show-cmd -- lolcat -f <(figlet -f big foobar)` will cre
 
 ## Installation
 
-### macOS
+### macOS / Linux
 
 Use `homebrew` to install `termshot`: `brew install homeport/tap/termshot`
 
