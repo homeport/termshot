@@ -16,7 +16,7 @@ require (
 	github.com/onsi/gomega v1.30.0
 	github.com/spf13/cobra v1.8.0
 	golang.org/x/image v0.14.0
-	golang.org/x/term v0.14.0
+	golang.org/x/term v0.15.0
 )
 
 require (
@@ -30,7 +30,7 @@ require (
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
