@@ -8,7 +8,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gonvenience/bunt v1.3.5
-	github.com/gonvenience/neat v1.3.12
+	github.com/gonvenience/neat v1.3.13
 	github.com/gonvenience/term v1.0.2
 	github.com/gonvenience/wrap v1.2.0
 	github.com/mattn/go-isatty v0.0.20
