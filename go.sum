@@ -18,8 +18,8 @@ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGw
 github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
 github.com/gonvenience/bunt v1.3.5 h1:wSQquifvwEWtzn27k1ngLfeLaStyt0k1b/K6TrlCNAs=
 github.com/gonvenience/bunt v1.3.5/go.mod h1:7ApqkVBEWvX04oJ28Q2WeI/BvJM6VtukaJAU/q/pTs8=
-github.com/gonvenience/neat v1.3.12 h1:xwIyRbJcG9LgcDYys+HHLH9DqqHeQsUpS5CfBUeskbs=
-github.com/gonvenience/neat v1.3.12/go.mod h1:8OljAIgPelN0uPPO94VBqxK+Kz98d6ZFwHDg5o/PfkE=
+github.com/gonvenience/neat v1.3.13 h1:wRp1k0GX5EOpelNH3GyLaFy4SvnJ6k1U5SenmEWkXko=
+github.com/gonvenience/neat v1.3.13/go.mod h1:aE3+z4XlTJ+RzlZxdFiAIIJc1ikYLALAWtX9LqjQ87Q=
 github.com/gonvenience/term v1.0.2 h1:qKa2RydbWIrabGjR/fegJwpW5m+JvUwFL8mLhHzDXn0=
 github.com/gonvenience/term v1.0.2/go.mod h1:wThTR+3MzWtWn7XGVW6qQ65uaVf8GHED98KmwpuEQeo=
 github.com/gonvenience/wrap v1.2.0 h1:CwAoa60QIBVmQn/aUregAbk9FstEr17k9vCYpKF972c=
