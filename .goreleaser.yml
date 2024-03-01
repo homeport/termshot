@@ -21,7 +21,7 @@ snapshot:
   name_template: "{{ .Tag }}-next"
 
 changelog:
-  skip: false
+  disable: true
   use: github-native
   filters:
     exclude:
