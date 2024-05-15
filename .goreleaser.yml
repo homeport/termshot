@@ -42,7 +42,7 @@ brews:
       name: GoReleaser Bot
       email: goreleaser@carlosbecker.com
 
-    folder: HomebrewFormula
+    directory: HomebrewFormula
     homepage: "https://github.com/homeport/termshot"
     description: "Creates screenshots based on terminal command output."
     license: "MIT"
