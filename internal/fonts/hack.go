@@ -22,14 +22,14 @@ package fonts
 
 import _ "embed"
 
-//go:embed Hack-Bold.ttf
+//go:embed hm-bold.ttf
 var HackBold []byte
 
-//go:embed Hack-BoldItalic.ttf
+//go:embed hm-bold.ttf
 var HackBoldItalic []byte
 
-//go:embed Hack-Italic.ttf
+//go:embed hm-regular.ttf
 var HackItalic []byte
 
-//go:embed Hack-Regular.ttf
+//go:embed hm-regular.ttf
 var HackRegular []byte
