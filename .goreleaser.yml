@@ -1,18 +1,21 @@
 ---
+version: 2
+
 builds:
-  - env:
-    - CGO_ENABLED=0
-    goos:
-    - linux
-    - darwin
-    goarch:
-    - amd64
-    - arm64
-    main: ./cmd/termshot/main.go
-    flags:
-    - -trimpath
-    ldflags:
-    - -s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version={{.Version}}
+- env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+  main: ./cmd/termshot/main.go
+  flags:
+  - -trimpath
+  ldflags:
+  - -s -w -extldflags "-static" -X github.com/homeport/termshot/internal/cmd.version={{.Version}}
+  mod_timestamp: '{{ .CommitTimestamp }}'
 
 checksum:
   name_template: 'checksums.txt'
@@ -20,32 +23,31 @@ checksum:
 snapshot:
   name_template: "{{ .Tag }}-next"
 
+release:
+  name_template: "{{.ProjectName}} release v{{.Version}}"
+
 changelog:
-  disable: true
-  use: github-native
+  disable: false
+  use: github
   filters:
     exclude:
-    - '^Bump'
+    - "Merge pull request"
+    - "dependabot"
 
 brews:
-  - repository:
-      owner: homeport
-      name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-
-    url_template: "https://github.com/homeport/termshot/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    download_strategy: CurlDownloadStrategy
-
-    # Git author used to commit to the repository.
-    # Defaults are shown.
-    commit_author:
-      name: GoReleaser Bot
-      email: goreleaser@carlosbecker.com
-
-    directory: HomebrewFormula
-    homepage: "https://github.com/homeport/termshot"
-    description: "Creates screenshots based on terminal command output."
-    license: "MIT"
-    skip_upload: false
-    test: |
-      system "#{bin}/termshot --version"
+- repository:
+    owner: homeport
+    name: homebrew-tap
+    token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+  url_template: "https://github.com/homeport/termshot/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  download_strategy: CurlDownloadStrategy
+  commit_author:
+    name: GoReleaser Bot
+    email: goreleaser@carlosbecker.com
+  directory: HomebrewFormula
+  homepage: "https://github.com/homeport/termshot"
+  description: "Creates screenshots based on terminal command output."
+  license: "MIT"
+  skip_upload: false
+  test: |
+    system "#{bin}/termshot --version"
