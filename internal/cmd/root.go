@@ -30,13 +30,18 @@ import (
 	"github.com/gonvenience/bunt"
 	"github.com/gonvenience/neat"
 	"github.com/gonvenience/wrap"
+
 	"github.com/homeport/termshot/internal/img"
 	"github.com/homeport/termshot/internal/ptexec"
+
 	"github.com/spf13/cobra"
 )
 
 // version string will be injected by automation
 var version string
+
+// saveToClipboard function will be implemented by OS specific code
+var saveToClipboard func(img.Scaffold) error
 
 var rootCmd = &cobra.Command{
 	Use:   fmt.Sprintf("%s [%s flags] [--] command [command flags] [command arguments] [...]", executableName(), executableName()),
@@ -73,9 +78,9 @@ window including all terminal colors and text decorations.
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
-		bytes, runErr := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
-		if runErr != nil {
-			return runErr
+		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
+		if err != nil {
+			return err
 		}
 
 		buf.Write(bytes)
@@ -116,28 +121,40 @@ window including all terminal colors and text decorations.
 			return err
 		}
 
-		filename, runErr := cmd.Flags().GetString("filename")
-		if filename == "" || runErr != nil {
+		// save image to clipboard
+		//
+		if toClipboard, err := cmd.Flags().GetBool("clipboard"); err == nil && toClipboard {
+			return saveToClipboard(scaffold)
+		}
+
+		// save image to file
+		//
+		filename, err := cmd.Flags().GetString("filename")
+		if filename == "" || err != nil {
 			fmt.Fprintf(os.Stderr, "failed to read filename from command-line, defaulting to out.png")
 			filename = "out.png"
 		}
 
-		extension := filepath.Ext(filename)
-		if extension != ".png" {
-			return fmt.Errorf("file extension '%s' of filename '%s' is not supported, only png is supported", extension, filename)
+		if extension := filepath.Ext(filename); extension != ".png" {
+			return fmt.Errorf("file extension %q of filename %q is not supported, only png is supported", extension, filename)
 		}
 
-		return scaffold.SavePNG(filename)
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("failed to create file: %w", err)
+		}
+
+		defer file.Close()
+		return scaffold.Write(file)
 	},
 }
 
 // Execute is the main entry point into the CLI code
 func Execute() {
 	rootCmd.SetFlagErrorFunc(func(c *cobra.Command, e error) error {
-		return wrap.Errorf(
-			fmt.Errorf("issue with %v\n\nIn order to differentiate between program flags and command flags,\nuse '--' before the command so that all flags before the separator\nbelong to %s, while all others are used for the command.\n\n%s", e, executableName(), c.UsageString()),
-			"Unknown %s flag",
+		return fmt.Errorf("Unknown %s flag %w",
 			executableName(),
+			fmt.Errorf("issue with %v\n\nIn order to differentiate between program flags and command flags,\nuse '--' before the command so that all flags before the separator\nbelong to %s, while all others are used for the command.\n\n%s", e, executableName(), c.UsageString()),
 		)
 	})
 
@@ -178,8 +195,14 @@ func executableName() string {
 
 func init() {
 	rootCmd.Flags().SortFlags = false
+
+	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
-	rootCmd.Flags().BoolP("version", "v", false, "show version")
+
+	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
+
+	// internals
+	rootCmd.Flags().BoolP("version", "v", false, "show version")
 }

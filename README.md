@@ -29,7 +29,7 @@ See [Releases](https://github.com/homeport/termshot/releases/) for pre-compiled 
 
 ## Usage
 
-This tool reads the console output and renders an output image that resembles a user interface window. It's inspired by some other web-based tools like [carbon.now.sh](https://carbon.now.sh/) and [codekeep.io/screenshot](https://codekeep.io/screenshot). Unlike those tools, `termshot` does not blindly apply syntax highlighting to some provided text; instead it reads the ANSI escape codes ("rich text") logged by most command-line tools and uses it to generate a high-fidelity "screenshot" of your terminal output.
+This tool reads the console output and renders an output image that resembles a user interface window. It's inspired by some other web-based tools like [carbon.now.sh](https://carbon.now.sh/), and [codekeep.io/screenshot](https://codekeep.io/screenshot). Unlike those tools, `termshot` does not blindly apply syntax highlighting to some provided text; instead it reads the ANSI escape codes ("rich text") logged by most command-line tools and uses it to generate a high-fidelity "screenshot" of your terminal output.
 
 Like `time`, `watch`, or `perf`, just prefix the command you want to screenshot with `termshot -- `.
 
@@ -41,7 +41,7 @@ This will generate an image file called `out.png` in the current directory.
 
 ![basic termshot](https://github.com/homeport/termshot/assets/3084745/11b578ee-8106-4e71-a1b8-57bbca4b192f)
 
-In some cases—say, if your target command contains _pipes_—there may still be ambiguity, even with `--`. In these cases, wrap your command in double quotes.
+In some cases, if your target command contains _pipes_—there may still be ambiguity, even with `--`. In these cases, wrap your command in double quotes.
 
 ```sh
 termshot -- "ls -l | grep go"
@@ -80,7 +80,7 @@ termshot --filename screenshots/my-image.png -- "ls -a"
 termshot --filename /Desktop/my-image.png -- "ls -a"
 ```
 
-Defaults to `out.png`
+Defaults to `out.png`.
 
 #### `--version`/`-v`
 

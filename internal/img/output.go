@@ -21,7 +21,9 @@
 package img
 
 import (
+	"image"
 	"image/color"
+	"image/png"
 	"io"
 	"math"
 	"strings"
@@ -156,7 +158,7 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 	return width, height
 }
 
-func (s *Scaffold) SavePNG(path string) error {
+func (s *Scaffold) image() (image.Image, error) {
 	var f = func(value float64) float64 { return s.factor * value }
 
 	var (
@@ -196,7 +198,7 @@ func (s *Scaffold) SavePNG(path string) error {
 
 		shadow, err := stackblur.Process(bc.Image(), uint32(s.shadowRadius))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		dc.DrawImage(shadow, 0, 0)
@@ -294,5 +296,14 @@ func (s *Scaffold) SavePNG(path string) error {
 		x += w
 	}
 
-	return dc.SavePNG(path)
+	return dc.Image(), nil
+}
+
+func (s *Scaffold) Write(w io.Writer) error {
+	image, err := s.image()
+	if err != nil {
+		return err
+	}
+
+	return png.Encode(w, image)
 }
