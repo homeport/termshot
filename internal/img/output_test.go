@@ -40,7 +40,7 @@ var _ = Describe("Creating images", func() {
 			err := scaffold.AddContent(strings.NewReader("foobar"))
 			Expect(err).ToNot(HaveOccurred())
 
-			err = scaffold.Write(io.Discard)
+			err = scaffold.Write(io.Discard, 132)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -58,7 +58,7 @@ var _ = Describe("Creating images", func() {
 			err := scaffold.AddContent(&buf)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = scaffold.Write(io.Discard)
+			err = scaffold.Write(io.Discard, 132)
 			Expect(err).ToNot(HaveOccurred())
 		})
 	})
