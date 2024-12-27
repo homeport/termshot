@@ -71,9 +71,18 @@ window including all terminal colors and text decorations.
 			return cmd.Usage()
 		}
 
+		var scaffold = img.NewImageCreator()
 		var buf bytes.Buffer
 
+		// Initialise scaffold with a column sizing so that the
+		// content can be wrapped accordingly
+		//
+		if columns, err := cmd.Flags().GetInt("columns"); err == nil && columns > 0 {
+			scaffold.SetColumns(columns)
+		}
+
 		// Prepend command line arguments to output content
+		//
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
@@ -86,6 +95,7 @@ window including all terminal colors and text decorations.
 		buf.Write(bytes)
 
 		// Allow manual override of command output content
+		//
 		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit {
 			tmpFile, tmpErr := os.CreateTemp("", executableName())
 			if tmpErr != nil {
@@ -116,7 +126,6 @@ window including all terminal colors and text decorations.
 			buf.Write(bytes)
 		}
 
-		var scaffold = img.NewImageCreator()
 		if err := scaffold.AddContent(&buf); err != nil {
 			return err
 		}
@@ -199,6 +208,7 @@ func init() {
 	// flags to control look
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
+	rootCmd.Flags().IntP("columns", "C", 0, "force fixed number of columns in screenshot")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
