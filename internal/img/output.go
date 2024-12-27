@@ -21,6 +21,7 @@
 package img
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -49,7 +50,6 @@ type Scaffold struct {
 	factor float64
 
 	columns int
-	rows    int
 
 	defaultForegroundColor color.Color
 
@@ -79,14 +79,10 @@ func NewImageCreator() Scaffold {
 	fontBoldItalic, _ := truetype.Parse(fonts.HackBoldItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
-	cols, rows := term.GetTerminalSize()
 	return Scaffold{
 		defaultForegroundColor: bunt.LightGray,
 
 		factor: f,
-
-		columns: cols,
-		rows:    rows,
 
 		margin:  f * 48,
 		padding: f * 24,
@@ -114,13 +110,46 @@ func (s *Scaffold) SetFontFaceItalic(face font.Face) { s.italic = face }
 
 func (s *Scaffold) SetFontFaceBoldItalic(face font.Face) { s.boldItalic = face }
 
-func (s *Scaffold) AddContent(in io.Reader) error {
-	tmp, err := bunt.ParseStream(in)
-	if err != nil {
-		return err
+func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
+
+func (s *Scaffold) GetFixedColumns() int {
+	if s.columns != 0 {
+		return s.columns
 	}
 
-	s.content = append(s.content, *tmp...)
+	columns, _ := term.GetTerminalSize()
+	return columns
+}
+
+func (s *Scaffold) AddContent(in io.Reader) error {
+	parsed, err := bunt.ParseStream(in)
+	if err != nil {
+		return fmt.Errorf("failed to parse input stream: %w", err)
+	}
+
+	var tmp bunt.String
+	var counter int
+	for _, cr := range *parsed {
+		counter++
+
+		if cr.Symbol == '\n' {
+			counter = 0
+		}
+
+		// Add an additional newline in case the column
+		// count is reached and line wrapping is needed
+		if counter > s.GetFixedColumns() {
+			counter = 0
+			tmp = append(tmp, bunt.ColoredRune{
+				Settings: cr.Settings,
+				Symbol:   '\n',
+			})
+		}
+
+		tmp = append(tmp, cr)
+	}
+
+	s.content = append(s.content, tmp...)
 
 	return nil
 }
@@ -143,13 +172,21 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 		"\n",
 	)
 
-	// width, max width of all lines
+	// temporary drawer for reference calucation
 	tmpDrawer := &font.Drawer{Face: s.regular}
-	for _, line := range lines {
-		advance := tmpDrawer.MeasureString(line)
-		if lineWidth := float64(advance >> 6); lineWidth > width {
-			width = lineWidth
+
+	// width, either by using longest line, or by fixed column value
+	switch s.columns {
+	case 0: // unlimited: max width of all lines
+		for _, line := range lines {
+			advance := tmpDrawer.MeasureString(line)
+			if lineWidth := float64(advance >> 6); lineWidth > width {
+				width = lineWidth
+			}
 		}
+
+	default: // fixed: max width based on column count
+		width = float64(tmpDrawer.MeasureString(strings.Repeat("a", s.GetFixedColumns())) >> 6)
 	}
 
 	// height, lines times font height and line spacing
