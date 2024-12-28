@@ -5,3 +5,10 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  allow:
+  - dependency-type: "all"
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10

@@ -1,13 +1,19 @@
 ---
-name: Release
+name: Build
+
 on:
   push:
-    tags:
-    - "v*"
+    tags-ignore:
+    - '**'
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 jobs:
   goreleaser:
-    name: Release
+    name: Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -24,7 +30,7 @@ jobs:
       uses: goreleaser/goreleaser-action@v6
       with:
         version: latest
-        args: release
+        args: build --clean --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}

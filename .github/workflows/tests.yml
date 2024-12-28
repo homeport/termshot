@@ -4,31 +4,39 @@ name: Tests
 on:
   push:
     tags-ignore:
-      - '**'
+    - '**'
     branches:
-      - main
+    - main
   pull_request:
     branches:
-      - main
+    - main
 
 jobs:
-
   build:
     name: Tests
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.19.x
+        go-version: 1.23.x
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Build
       run: go build ./...
 
     - name: Test
       run: |
-        go install -mod=mod github.com/onsi/ginkgo/v2/ginkgo
         make test
+
+    - name: Upload Code Coverage Profile
+      uses: codecov/codecov-action@v5
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        files: unit.coverprofile
+        flags: unittests
+        fail_ci_if_error: true
+        verbose: false

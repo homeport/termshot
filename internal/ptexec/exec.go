@@ -31,7 +31,6 @@ import (
 	"syscall"
 
 	"github.com/creack/pty"
-	"github.com/gonvenience/wrap"
 	"github.com/mattn/go-isatty"
 	"golang.org/x/term"
 )
@@ -59,7 +58,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	if isTerminal(os.Stdin) {
 		oldState, rawErr := term.MakeRaw(int(os.Stdin.Fd()))
 		if rawErr != nil {
-			return nil, wrap.Errorf(rawErr, "failed to enable RAW mode for Stdin")
+			return nil, fmt.Errorf("failed to enable RAW mode for Stdin: %w", rawErr)
 		}
 
 		// And make sure to restore the original mode eventually
@@ -78,7 +77,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 		go func() {
 			for range ch {
 				if ptyErr := pty.InheritSize(os.Stdin, pt); ptyErr != nil {
-					errors = append(errors, wrap.Error(ptyErr, "error resizing PTY"))
+					errors = append(errors, fmt.Errorf("error resizing PTY: %w", ptyErr))
 				}
 			}
 		}()
