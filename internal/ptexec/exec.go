@@ -36,7 +36,7 @@ import (
 )
 
 // RunCommandInPseudoTerminal runs the provided program with the given
-// arguments in a pseudo terminal (PTY) so tha the behavior is the same
+// arguments in a pseudo terminal (PTY) so that the behavior is the same
 // if it would be executed in a terminal
 func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	var errors = []error{}
