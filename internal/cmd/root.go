@@ -81,6 +81,18 @@ window including all terminal colors and text decorations.
 			scaffold.SetColumns(columns)
 		}
 
+		// Disable window shadow if requested
+		//
+		if val, err := cmd.Flags().GetBool("no-shadow"); err == nil {
+			scaffold.DrawShadow(!val)
+		}
+
+		// Disable window decorations (buttons) if requested
+		//
+		if val, err := cmd.Flags().GetBool("no-decoration"); err == nil {
+			scaffold.DrawDecorations(!val)
+		}
+
 		// Prepend command line arguments to output content
 		//
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
@@ -209,6 +221,8 @@ func init() {
 	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
 	rootCmd.Flags().IntP("columns", "C", 0, "force fixed number of columns in screenshot")
+	rootCmd.Flags().Bool("no-decoration", false, "do not draw window decorations")
+	rootCmd.Flags().Bool("no-shadow", false, "do not draw window shadow")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")

@@ -53,7 +53,9 @@ type Scaffold struct {
 
 	defaultForegroundColor color.Color
 
+	drawDecorations bool
 	drawShadow      bool
+
 	shadowBaseColor string
 	shadowRadius    uint8
 	shadowOffsetX   float64
@@ -87,7 +89,9 @@ func NewImageCreator() Scaffold {
 		margin:  f * 48,
 		padding: f * 24,
 
+		drawDecorations: true,
 		drawShadow:      true,
+
 		shadowBaseColor: "#10101066",
 		shadowRadius:    uint8(math.Min(f*16, 255)),
 		shadowOffsetX:   f * 16,
@@ -111,6 +115,10 @@ func (s *Scaffold) SetFontFaceItalic(face font.Face) { s.italic = face }
 func (s *Scaffold) SetFontFaceBoldItalic(face font.Face) { s.boldItalic = face }
 
 func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
+
+func (s *Scaffold) DrawDecorations(value bool) { s.drawDecorations = value }
+
+func (s *Scaffold) DrawShadow(value bool) { s.drawShadow = value }
 
 func (s *Scaffold) GetFixedColumns() int {
 	if s.columns != 0 {
@@ -215,7 +223,11 @@ func (s *Scaffold) image() (image.Image, error) {
 
 	xOffset := marginX
 	yOffset := marginY
-	titleOffset := f(40)
+
+	var titleOffset float64
+	if s.drawDecorations {
+		titleOffset = f(40)
+	}
 
 	width := contentWidth + 2*marginX + 2*paddingX
 	height := contentHeight + 2*marginY + 2*paddingY + titleOffset
@@ -241,8 +253,7 @@ func (s *Scaffold) image() (image.Image, error) {
 		dc.DrawImage(shadow, 0, 0)
 	}
 
-	// Draw rounded rectangle with outline and three button to produce the
-	// impression of a window with controls and a content area
+	// Draw rounded rectangle with outline to produce impression of a window
 	//
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
 	dc.SetHexColor("#151515")
@@ -253,10 +264,15 @@ func (s *Scaffold) image() (image.Image, error) {
 	dc.SetLineWidth(f(1))
 	dc.Stroke()
 
-	for i, color := range []string{red, yellow, green} {
-		dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
-		dc.SetHexColor(color)
-		dc.Fill()
+	// Optional: Draw window decorations (i.e. three buttons) to produce the
+	// impression of an actional window
+	//
+	if s.drawDecorations {
+		for i, color := range []string{red, yellow, green} {
+			dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
+			dc.SetHexColor(color)
+			dc.Fill()
+		}
 	}
 
 	// Apply the actual text into the prepared content area of the window
