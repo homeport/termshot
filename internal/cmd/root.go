@@ -99,11 +99,13 @@ window including all terminal colors and text decorations.
 			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
 		}
 
+		// Run the provided command in a pseudo terminal and capture
+		// the output to be later rendered into the screenshot
+		//
 		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
 		if err != nil {
 			return err
 		}
-
 		buf.Write(bytes)
 
 		// Allow manual override of command output content
@@ -138,17 +140,19 @@ window including all terminal colors and text decorations.
 			buf.Write(bytes)
 		}
 
+		// Add the captured output to the scaffold
+		//
 		if err := scaffold.AddContent(&buf); err != nil {
 			return err
 		}
 
-		// save image to clipboard
+		// Optional: Save image to clipboard
 		//
 		if toClipboard, err := cmd.Flags().GetBool("clipboard"); err == nil && toClipboard {
 			return saveToClipboard(scaffold)
 		}
 
-		// save image to file
+		// Save image to file
 		//
 		filename, err := cmd.Flags().GetString("filename")
 		if filename == "" || err != nil {
