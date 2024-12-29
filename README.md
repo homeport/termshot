@@ -55,7 +55,6 @@ Include the target command in the screenshot.
 
 ```sh
 termshot --show-cmd -- "ls -a"
-termshot --c -- "ls -a"
 ```
 
 ![termshot that shows command](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
@@ -66,7 +65,6 @@ Edit the output before generating the screenshot. This will open the rich text o
 
 ```sh
 termshot --edit -- "ls -a"
-termshot -e -- "ls -a"
 ```
 
 #### `--filename`/`-f`
