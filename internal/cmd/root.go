@@ -218,7 +218,7 @@ func init() {
 	rootCmd.Flags().SortFlags = false
 
 	// flags to control look
-	rootCmd.Flags().BoolP("edit", "e", false, "edit content before the creating screenshot")
+	rootCmd.Flags().BoolP("edit", "e", false, "edit content before creating screenshot")
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
 	rootCmd.Flags().IntP("columns", "C", 0, "force fixed number of columns in screenshot")
 	rootCmd.Flags().Bool("no-decoration", false, "do not draw window decorations")
