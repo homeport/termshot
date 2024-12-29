@@ -44,6 +44,11 @@ const (
 	green  = "#71BD47"
 )
 
+const (
+	defaultFontSize = 12
+	defaultFontDPI  = 144
+)
+
 type Scaffold struct {
 	content bunt.String
 
@@ -75,11 +80,10 @@ type Scaffold struct {
 func NewImageCreator() Scaffold {
 	f := 2.0
 
-	fontRegular, _ := truetype.Parse(fonts.HackRegular)
-	fontBold, _ := truetype.Parse(fonts.HackBold)
-	fontItalic, _ := truetype.Parse(fonts.HackItalic)
-	fontBoldItalic, _ := truetype.Parse(fonts.HackBoldItalic)
-	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
+	fontFaceOptions := &truetype.Options{
+		Size: f * defaultFontSize,
+		DPI:  defaultFontDPI,
+	}
 
 	return Scaffold{
 		defaultForegroundColor: bunt.LightGray,
@@ -97,10 +101,11 @@ func NewImageCreator() Scaffold {
 		shadowOffsetX:   f * 16,
 		shadowOffsetY:   f * 16,
 
-		regular:     truetype.NewFace(fontRegular, fontFaceOptions),
-		bold:        truetype.NewFace(fontBold, fontFaceOptions),
-		italic:      truetype.NewFace(fontItalic, fontFaceOptions),
-		boldItalic:  truetype.NewFace(fontBoldItalic, fontFaceOptions),
+		regular:    fonts.Hack.Regular(fontFaceOptions),
+		bold:       fonts.Hack.Bold(fontFaceOptions),
+		italic:     fonts.Hack.Italic(fontFaceOptions),
+		boldItalic: fonts.Hack.BoldItalic(fontFaceOptions),
+
 		lineSpacing: 1.2,
 		tabSpaces:   2,
 	}

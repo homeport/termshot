@@ -43,6 +43,15 @@ var version string
 // saveToClipboard function will be implemented by OS specific code
 var saveToClipboard func(img.Scaffold) error
 
+// commandIndicator is the string to be used to indicate the command in the screenshot
+var commandIndicator = func() string {
+	if val, ok := os.LookupEnv("TS_COMMAND_INDICATOR"); ok {
+		return val
+	}
+
+	return "➜"
+}()
+
 var rootCmd = &cobra.Command{
 	Use:   fmt.Sprintf("%s [%s flags] [--] command [command flags] [command arguments] [...]", executableName(), executableName()),
 	Short: "Creates a screenshot of terminal command output",
@@ -93,10 +102,13 @@ window including all terminal colors and text decorations.
 			scaffold.DrawDecorations(!val)
 		}
 
-		// Prepend command line arguments to output content
+		// Optional: Prepend command line arguments to output content
 		//
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
-			bunt.Fprintf(&buf, "Lime{➜} DimGray{%s}\n", strings.Join(args, " "))
+			bunt.Fprintf(&buf, "Lime{%s} DimGray{%s}\n",
+				commandIndicator,
+				strings.Join(args, " "),
+			)
 		}
 
 		// Run the provided command in a pseudo terminal and capture
