@@ -1,4 +1,4 @@
-// Copyright © 2021 The Homeport Team
+// Copyright © 2024 The Homeport Team
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,18 @@
 package fonts
 
 import (
-	_ "embed"
-
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
 )
 
-//go:embed Hack-Bold.ttf
-var hackBold []byte
+type Font interface {
+	Regular(opts *truetype.Options) font.Face
+	Bold(opts *truetype.Options) font.Face
+	Italic(opts *truetype.Options) font.Face
+	BoldItalic(opts *truetype.Options) font.Face
+}
 
-//go:embed Hack-BoldItalic.ttf
-var hackBoldItalic []byte
-
-//go:embed Hack-Italic.ttf
-var hackItalic []byte
-
-//go:embed Hack-Regular.ttf
-var hackRegular []byte
-
-type hackFont struct{}
-
-var Hack Font = hackFont{}
-
-func (f hackFont) Regular(opts *truetype.Options) font.Face    { return face(hackRegular, opts) }
-func (f hackFont) Bold(opts *truetype.Options) font.Face       { return face(hackBold, opts) }
-func (f hackFont) Italic(opts *truetype.Options) font.Face     { return face(hackItalic, opts) }
-func (f hackFont) BoldItalic(opts *truetype.Options) font.Face { return face(hackBoldItalic, opts) }
+func face(fontBytes []byte, opts *truetype.Options) font.Face {
+	font, _ := truetype.Parse(fontBytes)
+	return truetype.NewFace(font, opts)
+}
