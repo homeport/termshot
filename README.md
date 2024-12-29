@@ -49,6 +49,8 @@ termshot -- "ls -l | grep go"
 
 ![termshot with pipes](https://github.com/homeport/termshot/assets/3084745/5d0dd1ab-820d-46fc-8af7-8a294193c5ca)
 
+### Flags to control the look
+
 #### `--show-cmd`/`-c`
 
 Include the target command in the screenshot.
@@ -59,13 +61,25 @@ termshot --show-cmd -- "ls -a"
 
 ![termshot that shows command](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
 
-#### `--edit`/`-e`
+#### `--columns`/`-C`
 
-Edit the output before generating the screenshot. This will open the rich text output in the editor configured in `$EDITOR`, using `vi` as a fallback. Use this flag to remove unwanted or sensitive output.
+Enforce that screenshot is wrapped after the provided number of columns. Use this flag to make sure that the screenshot does not exceed a certain horizontal length.
 
-```sh
-termshot --edit -- "ls -a"
-```
+#### `--no-decoration`
+
+Do not draw window decorations (minimize, maximize, and close button).
+
+#### `--no-shadow`
+
+Do not draw window shadow.
+
+### Flags for output related settings
+
+#### `--clipboard`/`-b` (only on selected platforms)
+
+Do not create an output file with the screenshot, but save the screenshot image into the operating system clipboard.
+
+_Note:_ Only available on some platforms. Check `termshot` help to see if flag is available.
 
 #### `--filename`/`-f`
 
@@ -79,6 +93,18 @@ termshot --filename /Desktop/my-image.png -- "ls -a"
 ```
 
 Defaults to `out.png`.
+
+### Flags to control content
+
+#### `--edit`/`-e`
+
+Edit the output before generating the screenshot. This will open the rich text output in the editor configured in `$EDITOR`, using `vi` as a fallback. Use this flag to remove unwanted or sensitive output.
+
+```sh
+termshot --edit -- "ls -a"
+```
+
+### Miscellaneous flags
 
 #### `--version`/`-v`
 
