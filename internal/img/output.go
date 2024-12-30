@@ -33,9 +33,9 @@ import (
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"github.com/gonvenience/bunt"
+	"github.com/gonvenience/font"
 	"github.com/gonvenience/term"
-	"github.com/homeport/termshot/internal/fonts"
-	"golang.org/x/image/font"
+	imgfont "golang.org/x/image/font"
 )
 
 const (
@@ -69,10 +69,10 @@ type Scaffold struct {
 	padding float64
 	margin  float64
 
-	regular     font.Face
-	bold        font.Face
-	italic      font.Face
-	boldItalic  font.Face
+	regular     imgfont.Face
+	bold        imgfont.Face
+	italic      imgfont.Face
+	boldItalic  imgfont.Face
 	lineSpacing float64
 	tabSpaces   int
 }
@@ -101,23 +101,23 @@ func NewImageCreator() Scaffold {
 		shadowOffsetX:   f * 16,
 		shadowOffsetY:   f * 16,
 
-		regular:    fonts.Hack.Regular(fontFaceOptions),
-		bold:       fonts.Hack.Bold(fontFaceOptions),
-		italic:     fonts.Hack.Italic(fontFaceOptions),
-		boldItalic: fonts.Hack.BoldItalic(fontFaceOptions),
+		regular:    font.Hack.Regular(fontFaceOptions),
+		bold:       font.Hack.Bold(fontFaceOptions),
+		italic:     font.Hack.Italic(fontFaceOptions),
+		boldItalic: font.Hack.BoldItalic(fontFaceOptions),
 
 		lineSpacing: 1.2,
 		tabSpaces:   2,
 	}
 }
 
-func (s *Scaffold) SetFontFaceRegular(face font.Face) { s.regular = face }
+func (s *Scaffold) SetFontFaceRegular(face imgfont.Face) { s.regular = face }
 
-func (s *Scaffold) SetFontFaceBold(face font.Face) { s.bold = face }
+func (s *Scaffold) SetFontFaceBold(face imgfont.Face) { s.bold = face }
 
-func (s *Scaffold) SetFontFaceItalic(face font.Face) { s.italic = face }
+func (s *Scaffold) SetFontFaceItalic(face imgfont.Face) { s.italic = face }
 
-func (s *Scaffold) SetFontFaceBoldItalic(face font.Face) { s.boldItalic = face }
+func (s *Scaffold) SetFontFaceBoldItalic(face imgfont.Face) { s.boldItalic = face }
 
 func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
 
@@ -186,7 +186,7 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 	)
 
 	// temporary drawer for reference calucation
-	tmpDrawer := &font.Drawer{Face: s.regular}
+	tmpDrawer := &imgfont.Drawer{Face: s.regular}
 
 	// width, either by using longest line, or by fixed column value
 	switch s.columns {
