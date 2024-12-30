@@ -102,6 +102,12 @@ window including all terminal colors and text decorations.
 			scaffold.DrawDecorations(!val)
 		}
 
+		// Configure that canvas is clipped at the end
+		//
+		if val, err := cmd.Flags().GetBool("clip-canvas"); err == nil {
+			scaffold.ClipCanvas(val)
+		}
+
 		// Optional: Prepend command line arguments to output content
 		//
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
@@ -241,6 +247,7 @@ func init() {
 	rootCmd.Flags().IntP("columns", "C", 0, "force fixed number of columns in screenshot")
 	rootCmd.Flags().Bool("no-decoration", false, "do not draw window decorations")
 	rootCmd.Flags().Bool("no-shadow", false, "do not draw window shadow")
+	rootCmd.Flags().BoolP("clip-canvas", "s", false, "clip canvas to visible image area (no margin)")
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")

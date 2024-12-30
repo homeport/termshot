@@ -58,6 +58,8 @@ type Scaffold struct {
 
 	defaultForegroundColor color.Color
 
+	clipCanvas bool
+
 	drawDecorations bool
 	drawShadow      bool
 
@@ -124,6 +126,8 @@ func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
 func (s *Scaffold) DrawDecorations(value bool) { s.drawDecorations = value }
 
 func (s *Scaffold) DrawShadow(value bool) { s.drawShadow = value }
+
+func (s *Scaffold) ClipCanvas(value bool) { s.clipCanvas = value }
 
 func (s *Scaffold) GetFixedColumns() int {
 	if s.columns != 0 {
@@ -358,10 +362,47 @@ func (s *Scaffold) image() (image.Image, error) {
 }
 
 func (s *Scaffold) Write(w io.Writer) error {
-	image, err := s.image()
+	img, err := s.image()
 	if err != nil {
 		return err
 	}
 
-	return png.Encode(w, image)
+	// Optional: Clip image to minimum size by removing all surrounding transparent pixels
+	//
+	if s.clipCanvas {
+		if imgRGBA, ok := img.(*image.RGBA); ok {
+			var minX, minY int = math.MaxInt, math.MaxInt
+			var maxX, maxY int = 0, 0
+
+			var bounds = imgRGBA.Bounds()
+			for x := bounds.Min.X; x < bounds.Max.X; x++ {
+				for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+					r, g, b, a := imgRGBA.At(x, y).RGBA()
+					isTransparent := r == 0 && g == 0 && b == 0 && a == 0
+
+					if !isTransparent {
+						if x < minX {
+							minX = x
+						}
+
+						if y < minY {
+							minY = y
+						}
+
+						if x > maxX {
+							maxX = x
+						}
+
+						if y > maxY {
+							maxY = y
+						}
+					}
+				}
+			}
+
+			img = imgRGBA.SubImage(image.Rect(minX, minY, maxX, maxY))
+		}
+	}
+
+	return png.Encode(w, img)
 }
