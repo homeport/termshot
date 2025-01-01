@@ -309,9 +309,9 @@ func (s *Scaffold) image() (image.Image, error) {
 		switch cr.Settings & 0x02 {
 		case 2:
 			dc.SetRGB255(
-				int((cr.Settings>>32)&0xFF),
-				int((cr.Settings>>40)&0xFF),
-				int((cr.Settings>>48)&0xFF),
+				int((cr.Settings>>32)&0xFF), // #nosec G115
+				int((cr.Settings>>40)&0xFF), // #nosec G115
+				int((cr.Settings>>48)&0xFF), // #nosec G115
 			)
 
 			dc.DrawRectangle(x, y-h+12, w, h)
@@ -322,9 +322,9 @@ func (s *Scaffold) image() (image.Image, error) {
 		switch cr.Settings & 0x01 {
 		case 1:
 			dc.SetRGB255(
-				int((cr.Settings>>8)&0xFF),
-				int((cr.Settings>>16)&0xFF),
-				int((cr.Settings>>24)&0xFF),
+				int((cr.Settings>>8)&0xFF),  // #nosec G115
+				int((cr.Settings>>16)&0xFF), // #nosec G115
+				int((cr.Settings>>24)&0xFF), // #nosec G115
 			)
 
 		default:

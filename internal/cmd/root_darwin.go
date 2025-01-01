@@ -62,7 +62,7 @@ func init() {
 				return err
 			}
 
-			cmd := exec.Command(osascript, "-e", buf.String())
+			cmd := exec.Command(osascript, "-e", buf.String()) // #nosec G204
 			out, err := cmd.CombinedOutput()
 			if err != nil {
 				fmt.Fprint(os.Stderr, string(out))

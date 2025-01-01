@@ -68,6 +68,7 @@ window including all terminal colors and text decorations.
 				version = "(development)"
 			}
 
+			// #nosec G104
 			bunt.Printf("Lime{*%s*} version DimGray{%s}\n",
 				executableName(),
 				version,
@@ -111,6 +112,7 @@ window including all terminal colors and text decorations.
 		// Optional: Prepend command line arguments to output content
 		//
 		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
+			// #nosec G104
 			bunt.Fprintf(&buf, "Lime{%s} DimGray{%s}\n",
 				commandIndicator,
 				strings.Join(args, " "),
@@ -182,7 +184,7 @@ window including all terminal colors and text decorations.
 			return fmt.Errorf("file extension %q of filename %q is not supported, only png is supported", extension, filename)
 		}
 
-		file, err := os.Create(filename)
+		file, err := os.Create(filepath.Clean(filename))
 		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}
