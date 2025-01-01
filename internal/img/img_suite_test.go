@@ -21,13 +21,57 @@
 package img_test
 
 import (
+	"bytes"
+	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
+
+	. "github.com/homeport/termshot/internal/img"
 )
 
 func TestImg(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Image Creation Suite")
+}
+
+func testdata(path ...string) string {
+	return filepath.Join(append([]string{"..", "..", "test", "data"}, path...)...)
+}
+
+func LookLike(path string) types.GomegaMatcher {
+	return &LookLikeMatcher{path}
+}
+
+type LookLikeMatcher struct{ path string }
+
+func (m *LookLikeMatcher) Match(actual interface{}) (bool, error) {
+	scaffold, ok := actual.(Scaffold)
+	if !ok {
+		return false, fmt.Errorf("LookLike must be passed a Scaffold. Got\n%T", actual)
+	}
+
+	var out bytes.Buffer
+	if err := scaffold.Write(&out); err != nil {
+		return false, err
+	}
+
+	reference, err := os.ReadFile(m.path)
+	if err != nil {
+		return false, err
+	}
+
+	return bytes.Equal(out.Bytes(), reference), nil
+}
+
+func (matcher *LookLikeMatcher) FailureMessage(actual interface{}) string {
+	return fmt.Sprintf("Expected scaffold to look like %s", matcher.path)
+}
+
+func (matcher *LookLikeMatcher) NegatedFailureMessage(actual interface{}) string {
+	return fmt.Sprintf("Expected scaffold not to look like %s", matcher.path)
 }
