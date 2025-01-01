@@ -27,6 +27,7 @@ import (
 	"image/png"
 	"io"
 	"math"
+	"os"
 	"strings"
 
 	"github.com/esimov/stackblur-go"
@@ -48,6 +49,15 @@ const (
 	defaultFontSize = 12
 	defaultFontDPI  = 144
 )
+
+// commandIndicator is the string to be used to indicate the command in the screenshot
+var commandIndicator = func() string {
+	if val, ok := os.LookupEnv("TS_COMMAND_INDICATOR"); ok {
+		return val
+	}
+
+	return "➜"
+}()
 
 type Scaffold struct {
 	content bunt.String
@@ -136,6 +146,15 @@ func (s *Scaffold) GetFixedColumns() int {
 
 	columns, _ := term.GetTerminalSize()
 	return columns
+}
+
+func (s *Scaffold) AddCommand(args ...string) error {
+	return s.AddContent(strings.NewReader(
+		bunt.Sprintf("Lime{%s} DimGray{%s}\n",
+			commandIndicator,
+			strings.Join(args, " "),
+		),
+	))
 }
 
 func (s *Scaffold) AddContent(in io.Reader) error {
