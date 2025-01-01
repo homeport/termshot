@@ -29,7 +29,6 @@ import (
 
 	"github.com/gonvenience/bunt"
 	"github.com/gonvenience/neat"
-	"github.com/gonvenience/wrap"
 
 	"github.com/homeport/termshot/internal/img"
 	"github.com/homeport/termshot/internal/ptexec"
@@ -204,27 +203,30 @@ func Execute() {
 	})
 
 	if err := rootCmd.Execute(); err != nil {
-		var headline string
-		var content bytes.Buffer
+		var headline, content string
 
-		switch e := err.(type) {
-		case wrap.ContextError:
-			headline = e.Context()
-			content.WriteString(e.Cause().Error())
+		type wrappedError interface {
+			Error() string
+			Unwrap() error
+		}
+
+		switch err := err.(type) {
+		case wrappedError:
+			headline = strings.SplitN(err.Error(), ":", 2)[0]
+			content = err.Unwrap().Error()
 
 		default:
 			headline = "Error occurred"
-			content.WriteString(e.Error())
+			content = err.Error()
 		}
 
-		neat.Box(
-			os.Stderr,
+		fmt.Fprint(os.Stderr, neat.ContentBox(
 			headline,
-			&content,
+			content,
 			neat.HeadlineColor(bunt.OrangeRed),
 			neat.ContentColor(bunt.LightCoral),
 			neat.NoLineWrap(),
-		)
+		))
 
 		os.Exit(1)
 	}
