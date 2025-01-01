@@ -115,7 +115,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 func copy(dst io.Writer, src io.Reader) error {
 	_, err := io.Copy(dst, src)
 	if err != nil {
-		switch terr := err.(type) {
+		switch terr := err.(type) { //nolint:gocritic
 		case *os.PathError:
 			// Workaround for issue https://github.com/creack/pty/issues/100
 			// where on Linux systems it can happen that the pseudo terminal

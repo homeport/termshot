@@ -306,7 +306,7 @@ func (s *Scaffold) image() (image.Image, error) {
 		w, h := dc.MeasureString(str)
 
 		// background color
-		switch cr.Settings & 0x02 {
+		switch cr.Settings & 0x02 { //nolint:gocritic
 		case 2:
 			dc.SetRGB255(
 				int((cr.Settings>>32)&0xFF), // #nosec G115
