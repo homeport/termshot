@@ -22,7 +22,6 @@ package img_test
 
 import (
 	"bytes"
-	"io"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -34,14 +33,46 @@ import (
 
 var _ = Describe("Creating images", func() {
 	Context("Use scaffold to create PNG file", func() {
+		BeforeEach(func() {
+			SetColorSettings(ON, ON)
+		})
+
 		It("should write a PNG stream based on provided input", func() {
 			scaffold := NewImageCreator()
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-foobar.png")))
+		})
 
-			err := scaffold.AddContent(strings.NewReader("foobar"))
-			Expect(err).ToNot(HaveOccurred())
+		It("should omit the window decorations when configured", func() {
+			scaffold := NewImageCreator()
+			scaffold.DrawDecorations(false)
 
-			err = scaffold.Write(io.Discard)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-no-decoration.png")))
+		})
+
+		It("should omit the window shadow when configured", func() {
+			scaffold := NewImageCreator()
+			scaffold.DrawShadow(false)
+
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-no-shadow.png")))
+		})
+
+		It("should clip the canvas when configured", func() {
+			scaffold := NewImageCreator()
+			scaffold.ClipCanvas(true)
+
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-clip-canvas.png")))
+		})
+
+		It("should wrap the content when configured", func() {
+			scaffold := NewImageCreator()
+			scaffold.SetColumns(4)
+
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-wrapping.png")))
 		})
 
 		It("should write a PNG stream based on provided input with ANSI sequences", func() {
@@ -54,12 +85,8 @@ var _ = Describe("Creating images", func() {
 			_, _ = Fprintf(&buf, "\tMintCream{MintCream}\n")
 
 			scaffold := NewImageCreator()
-
-			err := scaffold.AddContent(&buf)
-			Expect(err).ToNot(HaveOccurred())
-
-			err = scaffold.Write(io.Discard)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(scaffold.AddContent(&buf)).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-ansi.png")))
 		})
 	})
 })
