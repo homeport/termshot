@@ -35,23 +35,74 @@ import (
 	"golang.org/x/term"
 )
 
-// RunCommandInPseudoTerminal runs the provided program with the given
-// arguments in a pseudo terminal (PTY) so that the behavior is the same
-// if it would be executed in a terminal
-func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
-	var errors = []error{}
+// PseudoTerminal defines the setup for a command to be run in a pseudo
+// terminal, e.g. terminal size, or output settings
+type PseudoTerminal struct {
+	name string
+	args []string
+
+	shell string
+
+	cols   uint16
+	rows   uint16
+	resize bool
+
+	stdout io.Writer
+}
+
+// New creates a new pseudo terminal builder
+func New() *PseudoTerminal {
+	return &PseudoTerminal{
+		shell:  "/bin/sh",
+		resize: true,
+		stdout: os.Stdout,
+	}
+}
+
+// Cols sets the width/columns for the pseudo terminal
+func (c *PseudoTerminal) Cols(cols uint16) *PseudoTerminal {
+	c.cols = cols
+	return c
+}
+
+// Rows sets the lines/rows for the pseudo terminal
+func (c *PseudoTerminal) Rows(rows uint16) *PseudoTerminal {
+	c.rows = rows
+	return c
+}
+
+// Stdout sets the writer to be used for the standard output
+func (c *PseudoTerminal) Stdout(stdout io.Writer) *PseudoTerminal {
+	c.stdout = stdout
+	return c
+}
+
+// Command sets the command and arguments to be used
+func (c *PseudoTerminal) Command(name string, args ...string) *PseudoTerminal {
+	c.name = name
+	c.args = args
+	return c
+}
+
+// Run runs the provided command/script with the given arguments in a pseudo
+// terminal (PTY) so that the behavior is the same if it would be executed
+// in a terminal
+func (c *PseudoTerminal) Run() ([]byte, error) {
+	if c.name == "" {
+		return nil, fmt.Errorf("no command specified")
+	}
 
 	// Convenience hack in case command contains a space, for example in case
 	// typical construct like "foo | grep" are used.
-	if strings.Contains(name, " ") {
-		args = []string{
+	if strings.Contains(c.name, " ") {
+		c.args = []string{
 			"-c",
 			strings.Join(append(
-				[]string{name},
-				args...,
+				[]string{c.name},
+				c.args...,
 			), " "),
 		}
-		name = "/bin/sh"
+		c.name = c.shell
 	}
 
 	// Set RAW mode for Stdin
@@ -65,13 +116,17 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 		defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }()
 	}
 
-	pt, err := pty.Start(exec.Command(name, args...))
+	// collect all errors along the way
+	var errors = []error{}
+
+	// #nosec G204 -- since this is exactly what we want, arbitrary commands
+	pt, err := c.pseudoTerminal(exec.Command(c.name, c.args...))
 	if err != nil {
 		return nil, err
 	}
 
 	// Support terminal resizing
-	if isTerminal(os.Stdin) {
+	if c.resize && isTerminal(os.Stdin) {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, syscall.SIGWINCH)
 		go func() {
@@ -98,7 +153,7 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}()
 
 	var buf bytes.Buffer
-	if err = copy(io.MultiWriter(os.Stdout, &buf), pt); err != nil {
+	if err = copy(io.MultiWriter(c.stdout, &buf), pt); err != nil {
 		return nil, err
 	}
 
@@ -110,6 +165,40 @@ func RunCommandInPseudoTerminal(name string, args ...string) ([]byte, error) {
 	}
 
 	return buf.Bytes(), nil
+}
+
+func (c *PseudoTerminal) pseudoTerminal(cmd *exec.Cmd) (*os.File, error) {
+	if c.cols == 0 && c.rows == 0 {
+		return pty.Start(cmd)
+	}
+
+	size, err := pty.GetsizeFull(os.Stdout)
+	if err != nil {
+		// Obtaining terminal size is prone to error in CI systems, e.g. in
+		// GitHub Action setup or similar, so only fail if CI is not set
+		if !isCI() {
+			return nil, fmt.Errorf("failed to get size: %w", err)
+		}
+
+		// For CI systems, assume a reasonable default even if the terminal
+		// size cannot be obtained through ioctl
+		size = &pty.Winsize{Rows: 25, Cols: 80}
+	}
+
+	// Overwrite rows if fixed value is configured
+	if c.rows != 0 {
+		size.Rows = c.rows
+	}
+
+	// Overwrite columns if fixed value is configured
+	if c.cols != 0 {
+		size.Cols = c.cols
+	}
+
+	// With fixed rows/cols, terminal resizing support is not useful
+	c.resize = false
+
+	return pty.StartWithSize(cmd, size)
 }
 
 func copy(dst io.Writer, src io.Reader) error {
@@ -134,4 +223,9 @@ func copy(dst io.Writer, src io.Reader) error {
 func isTerminal(f *os.File) bool {
 	return isatty.IsTerminal(f.Fd()) ||
 		isatty.IsCygwinTerminal(f.Fd())
+}
+
+func isCI() bool {
+	ci, ok := os.LookupEnv("CI")
+	return ok && ci == "true"
 }
