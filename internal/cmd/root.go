@@ -73,12 +73,14 @@ window including all terminal colors and text decorations.
 
 		var scaffold = img.NewImageCreator()
 		var buf bytes.Buffer
+		var pt = ptexec.New()
 
 		// Initialise scaffold with a column sizing so that the
 		// content can be wrapped accordingly
 		//
 		if columns, err := cmd.Flags().GetInt("columns"); err == nil && columns > 0 {
 			scaffold.SetColumns(columns)
+			pt.Cols(uint16(columns))
 		}
 
 		// Disable window shadow if requested
@@ -110,9 +112,9 @@ window including all terminal colors and text decorations.
 		// Run the provided command in a pseudo terminal and capture
 		// the output to be later rendered into the screenshot
 		//
-		bytes, err := ptexec.RunCommandInPseudoTerminal(args[0], args[1:]...)
+		bytes, err := pt.Command(args[0], args[1:]...).Run()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to run command in pseudo terminal: %w", err)
 		}
 		buf.Write(bytes)
 
@@ -135,7 +137,7 @@ window including all terminal colors and text decorations.
 				editor = "vi"
 			}
 
-			if _, err := ptexec.RunCommandInPseudoTerminal(editor, tmpFile.Name()); err != nil {
+			if _, err := ptexec.New().Command(editor, tmpFile.Name()).Run(); err != nil {
 				return err
 			}
 
