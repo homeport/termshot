@@ -9,7 +9,7 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gonvenience/bunt v1.4.0
 	github.com/gonvenience/font v0.0.2
-	github.com/gonvenience/neat v1.3.13
+	github.com/gonvenience/neat v1.3.14
 	github.com/gonvenience/term v1.0.2
 	github.com/mattn/go-isatty v0.0.20
 	github.com/onsi/ginkgo/v2 v2.22.2
