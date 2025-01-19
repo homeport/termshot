@@ -17,12 +17,10 @@ github.com/gonvenience/bunt v1.4.0 h1:xRAANCgSmQwGoHIyWg80yFgomTiblBayUUSBBPjDHK
 github.com/gonvenience/bunt v1.4.0/go.mod h1:J9S2b1ZmUKdvybPxhq0hhrIvAwxcUXJjerudNa2Fhdw=
 github.com/gonvenience/font v0.0.2 h1:n+YstBTpvkDvPvorJZGI91FeaY3rZD7AZuNv/EVkA/o=
 github.com/gonvenience/font v0.0.2/go.mod h1:ixD5fWiGPrhrVkgqdrXywXr7zvzR0ghJvi6XOC1UIo4=
-github.com/gonvenience/neat v1.3.14 h1:J9vOJ4eXaKXpqLWQdgI7dXr9NX7dSm41pXlsaDGYtU4=
-github.com/gonvenience/neat v1.3.14/go.mod h1:FA/gRBZeAKvFswAR9W1GiRAz9qrQMdyBrI8lBXmugmQ=
+github.com/gonvenience/neat v1.3.15 h1:qRMZzVP/HtLsQLKZGW8NGZIXdH1TMHsPjMJe2tvzDqk=
+github.com/gonvenience/neat v1.3.15/go.mod h1:TMdu+WVzfRU46GvcMAYALdvlWxiUxP1yqpZn/hKUhP8=
 github.com/gonvenience/term v1.0.3 h1:8MleXhMCCzLeWXmiEA/IQ/ZoaKBL5mHrmRVJsU1nWtI=
 github.com/gonvenience/term v1.0.3/go.mod h1:VJaaP9pwAlSYSlyv1O7schD/GZJRg8HUmiulQmGOABw=
-github.com/gonvenience/wrap v1.2.1 h1:k8cbG42+Z+qPS7WO87IKculFVgffEdI753G3SW0tJwQ=
-github.com/gonvenience/wrap v1.2.1/go.mod h1:2kZvOb+r839tTaTj1//JZJ+BpN/4R8Y8vDeRJuUWCWg=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad h1:a6HEuzUHeKH6hwfN/ZoQgRgVIWFJljSWa/zetS2WTvg=
