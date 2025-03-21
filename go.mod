@@ -1,6 +1,7 @@
 module github.com/homeport/termshot
 
 go 1.22.0
+toolchain go1.24.1
 
 require (
 	github.com/creack/pty v1.1.24
@@ -12,7 +13,7 @@ require (
 	github.com/gonvenience/neat v1.3.15
 	github.com/gonvenience/term v1.0.3
 	github.com/mattn/go-isatty v0.0.20
-	github.com/onsi/ginkgo/v2 v2.22.2
+	github.com/onsi/ginkgo/v2 v2.23.2
 	github.com/onsi/gomega v1.36.2
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/image v0.24.0
