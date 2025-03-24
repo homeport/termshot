@@ -17,8 +17,8 @@ github.com/gonvenience/bunt v1.4.0 h1:xRAANCgSmQwGoHIyWg80yFgomTiblBayUUSBBPjDHK
 github.com/gonvenience/bunt v1.4.0/go.mod h1:J9S2b1ZmUKdvybPxhq0hhrIvAwxcUXJjerudNa2Fhdw=
 github.com/gonvenience/font v0.0.3 h1:pNcA6eC7+rgqi4I392IafabtLauAKlFOWE1KONTqLmA=
 github.com/gonvenience/font v0.0.3/go.mod h1:Xr5fItB88SgHal7EeBnFb7dvghunOA5gNaFwycBa4Aw=
-github.com/gonvenience/neat v1.3.15 h1:qRMZzVP/HtLsQLKZGW8NGZIXdH1TMHsPjMJe2tvzDqk=
-github.com/gonvenience/neat v1.3.15/go.mod h1:TMdu+WVzfRU46GvcMAYALdvlWxiUxP1yqpZn/hKUhP8=
+github.com/gonvenience/neat v1.3.16 h1:Vb0iCkSHGWaA+ry69RY3HpQ6Ooo6o/g2wjI80db8DjI=
+github.com/gonvenience/neat v1.3.16/go.mod h1:sLxdQNNluxbpROxTTHs3XBSJX8fwFX5toEULUy74ODA=
 github.com/gonvenience/term v1.0.4 h1:qkCGfmUtpzs9W4jWgNijaGF6dg3oSIh+kZCzT5cPNZY=
 github.com/gonvenience/term v1.0.4/go.mod h1:OzNdQC5NVBou9AifaHd1QG6EP8iDdpaT7GFm1bVgslg=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
