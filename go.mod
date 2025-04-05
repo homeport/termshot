@@ -2,8 +2,6 @@ module github.com/homeport/termshot
 
 go 1.23.0
 
-toolchain go1.24.1
-
 require (
 	github.com/creack/pty v1.1.24
 	github.com/esimov/stackblur-go v1.1.0

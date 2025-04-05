@@ -23,6 +23,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,7 +68,10 @@ window including all terminal colors and text decorations.
 			return nil
 		}
 
-		if len(args) == 0 {
+		rawRead, _ := cmd.Flags().GetString("raw-read")
+		rawWrite, _ := cmd.Flags().GetString("raw-write")
+
+		if len(args) == 0 && rawRead == "" {
 			return cmd.Usage()
 		}
 
@@ -103,24 +107,36 @@ window including all terminal colors and text decorations.
 
 		// Optional: Prepend command line arguments to output content
 		//
-		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand {
+		if includeCommand, err := cmd.Flags().GetBool("show-cmd"); err == nil && includeCommand && rawRead == "" {
 			if err := scaffold.AddCommand(args...); err != nil {
 				return err
 			}
 		}
 
-		// Run the provided command in a pseudo terminal and capture
-		// the output to be later rendered into the screenshot
+		// Get the actual content for the screenshot
 		//
-		bytes, err := pt.Command(args[0], args[1:]...).Run()
-		if err != nil {
-			return fmt.Errorf("failed to run command in pseudo terminal: %w", err)
+		if rawRead == "" {
+			// Run the provided command in a pseudo terminal and capture
+			// the output to be later rendered into the screenshot
+			bytes, err := pt.Command(args[0], args[1:]...).Run()
+			if err != nil {
+				return fmt.Errorf("failed to run command in pseudo terminal: %w", err)
+			}
+			buf.Write(bytes)
+
+		} else {
+			// Read the content from an existing file instead of
+			// executing a command to read its output
+			bytes, err := readFile(rawRead)
+			if err != nil {
+				return fmt.Errorf("failed to read contents: %w", err)
+			}
+			buf.Write(bytes)
 		}
-		buf.Write(bytes)
 
 		// Allow manual override of command output content
 		//
-		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit {
+		if edit, err := cmd.Flags().GetBool("edit"); err == nil && edit && rawRead == "" {
 			tmpFile, tmpErr := os.CreateTemp("", executableName())
 			if tmpErr != nil {
 				return tmpErr
@@ -156,6 +172,27 @@ window including all terminal colors and text decorations.
 			return err
 		}
 
+		// Optional: Save content as-is to a file
+		//
+		if rawWrite != "" {
+			var output *os.File
+			var err error
+			switch rawWrite {
+			case "-":
+				output = os.Stdout
+
+			default:
+				output, err = os.Create(filepath.Clean(rawWrite))
+				if err != nil {
+					return fmt.Errorf("failed to create file: %w", err)
+				}
+
+				defer func() { _ = output.Close() }()
+			}
+
+			return scaffold.WriteRaw(output)
+		}
+
 		// Optional: Save image to clipboard
 		//
 		if toClipboard, err := cmd.Flags().GetBool("clipboard"); err == nil && toClipboard {
@@ -180,7 +217,7 @@ window including all terminal colors and text decorations.
 		}
 
 		defer file.Close()
-		return scaffold.Write(file)
+		return scaffold.WritePNG(file)
 	},
 }
 
@@ -231,6 +268,16 @@ func executableName() string {
 	return "termshot"
 }
 
+func readFile(name string) ([]byte, error) {
+	switch name {
+	case "-":
+		return io.ReadAll(os.Stdin)
+
+	default:
+		return os.ReadFile(filepath.Clean(name))
+	}
+}
+
 func init() {
 	rootCmd.Flags().SortFlags = false
 
@@ -246,6 +293,10 @@ func init() {
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
+
+	// flags for raw output processing
+	rootCmd.Flags().String("raw-write", "", "write raw output to file instead of creating a screenshot")
+	rootCmd.Flags().String("raw-read", "", "read raw input from file instead of executing a command")
 
 	// internals
 	rootCmd.Flags().BoolP("version", "v", false, "show version")

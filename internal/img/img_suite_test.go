@@ -56,7 +56,7 @@ func (m *LookLikeMatcher) Match(actual interface{}) (bool, error) {
 	}
 
 	var out bytes.Buffer
-	if err := scaffold.Write(&out); err != nil {
+	if err := scaffold.WritePNG(&out); err != nil {
 		return false, err
 	}
 
