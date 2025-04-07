@@ -18,7 +18,7 @@ require (
 	github.com/onsi/gomega v1.37.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/image v0.25.0
-	golang.org/x/term v0.30.0
+	golang.org/x/term v0.31.0
 )
 
 require (
