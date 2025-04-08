@@ -60,6 +60,7 @@ window including all terminal colors and text decorations.
 			}
 
 			// #nosec G104
+			// nolint:all
 			bunt.Printf("Lime{*%s*} version DimGray{%s}\n",
 				executableName(),
 				version,
@@ -142,7 +143,7 @@ window including all terminal colors and text decorations.
 				return tmpErr
 			}
 
-			defer os.Remove(tmpFile.Name())
+			defer func() { _ = os.Remove(tmpFile.Name()) }()
 
 			if err := os.WriteFile(tmpFile.Name(), buf.Bytes(), os.FileMode(0644)); err != nil {
 				return err
@@ -216,7 +217,7 @@ window including all terminal colors and text decorations.
 			return fmt.Errorf("failed to create file: %w", err)
 		}
 
-		defer file.Close()
+		defer func() { _ = file.Close() }()
 		return scaffold.WritePNG(file)
 	},
 }

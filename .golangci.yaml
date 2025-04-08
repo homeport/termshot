@@ -1,5 +1,6 @@
 ---
+version: "2"
 linters:
   enable:
-  - gosec
-  - gocritic
+    - gocritic
+    - gosec
