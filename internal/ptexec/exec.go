@@ -145,7 +145,7 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 	}
 
 	go func() {
-		defer pt.Close()
+		defer func() { _ = pt.Close() }()
 		_, copyErr := io.Copy(pt, os.Stdin)
 		if copyErr != nil {
 			errors = append(errors, copyErr)

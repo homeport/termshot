@@ -305,7 +305,7 @@ func (s *Scaffold) image() (image.Image, error) {
 
 	// Apply the actual text into the prepared content area of the window
 	//
-	var x, y float64 = xOffset + paddingX, yOffset + paddingY + titleOffset + s.fontHeight()
+	var x, y = xOffset + paddingX, yOffset + paddingY + titleOffset + s.fontHeight()
 	for _, cr := range s.content {
 		switch cr.Settings & 0x1C {
 		case 4:
@@ -398,8 +398,8 @@ func (s *Scaffold) WritePNG(w io.Writer) error {
 	//
 	if s.clipCanvas {
 		if imgRGBA, ok := img.(*image.RGBA); ok {
-			var minX, minY int = math.MaxInt, math.MaxInt
-			var maxX, maxY int = 0, 0
+			var minX, minY = math.MaxInt, math.MaxInt
+			var maxX, maxY = 0, 0
 
 			var bounds = imgRGBA.Bounds()
 			for x := bounds.Min.X; x < bounds.Max.X; x++ {
