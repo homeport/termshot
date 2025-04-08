@@ -54,7 +54,7 @@ func init() {
 				return err
 			}
 
-			if err := scaffold.Write(hex.NewEncoder(&buf)); err != nil {
+			if err := scaffold.WritePNG(hex.NewEncoder(&buf)); err != nil {
 				return err
 			}
 
