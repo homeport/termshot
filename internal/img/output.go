@@ -380,7 +380,15 @@ func (s *Scaffold) image() (image.Image, error) {
 	return dc.Image(), nil
 }
 
+// Write writes the scaffold content as PNG into the provided writer
+//
+// Deprecated: Use [Scaffold.WritePNG] instead.
 func (s *Scaffold) Write(w io.Writer) error {
+	return s.WritePNG(w)
+}
+
+// WritePNG writes the scaffold content as PNG into the provided writer
+func (s *Scaffold) WritePNG(w io.Writer) error {
 	img, err := s.image()
 	if err != nil {
 		return err
@@ -424,4 +432,10 @@ func (s *Scaffold) Write(w io.Writer) error {
 	}
 
 	return png.Encode(w, img)
+}
+
+// WriteRaw writes the scaffold content as-is into the provided writer
+func (s *Scaffold) WriteRaw(w io.Writer) error {
+	_, err := w.Write([]byte(s.content.String()))
+	return err
 }

@@ -106,6 +106,14 @@ termshot --edit -- "ls -a"
 
 ### Miscellaneous flags
 
+#### `--raw-write <file>`
+
+Write command output as-is into the file that is specified as the flag argument. No screenshot is being created. The command-line flag `--filename` has no effect, when `--raw-write` is used.
+
+#### `--raw-read <file>`
+
+Read input from provided file instead of running a command. If this flag is being used, no pseudo terminal is being created to execute a command. The command-line flags `--show-cmd`, and `--edit` have no effect, when `--raw-read` is used.
+
 #### `--version`/`-v`
 
 Print the version of `termshot` installed.

@@ -96,4 +96,20 @@ var _ = Describe("Creating images", func() {
 			Expect(scaffold).To(LookLike(testdata("expected-ansi.png")))
 		})
 	})
+
+	Context("Use scaffold to create raw output file", func() {
+		var buf bytes.Buffer
+
+		BeforeEach(func() {
+			SetColorSettings(ON, ON)
+			buf.Reset()
+		})
+
+		It("should write an output file with the content as-is", func() {
+			scaffold := NewImageCreator()
+			Expect(scaffold.AddContent(strings.NewReader(Sprintf("MintCream{foobar}")))).To(Succeed())
+			Expect(scaffold.WriteRaw(&buf)).To(Succeed())
+			Expect(buf.String()).To(Equal("\x1b[38;2;245;255;250mfoobar\x1b[0m"))
+		})
+	})
 })
