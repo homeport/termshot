@@ -1,10 +1,10 @@
 module github.com/homeport/termshot
 
-go 1.23.0
+go 1.24
 
 require (
 	github.com/creack/pty v1.1.24
-	github.com/esimov/stackblur-go v1.1.0
+	github.com/esimov/stackblur-go v1.1.1
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gonvenience/bunt v1.4.1
