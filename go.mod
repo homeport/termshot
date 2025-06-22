@@ -1,10 +1,10 @@
 module github.com/homeport/termshot
 
-go 1.23.0
+go 1.24
 
 require (
 	github.com/creack/pty v1.1.24
-	github.com/esimov/stackblur-go v1.1.0
+	github.com/esimov/stackblur-go v1.1.1
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gonvenience/bunt v1.4.1
@@ -20,7 +20,7 @@ require (
 )
 
 require (
-	github.com/go-logr/logr v1.4.2 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect

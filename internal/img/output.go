@@ -273,12 +273,13 @@ func (s *Scaffold) image() (image.Image, error) {
 		bc.SetHexColor(s.shadowBaseColor)
 		bc.Fill()
 
-		shadow, err := stackblur.Process(bc.Image(), uint32(s.shadowRadius))
-		if err != nil {
+		src := bc.Image()
+		dst := image.NewNRGBA(src.Bounds())
+		if err := stackblur.Process(dst, src, uint32(s.shadowRadius)); err != nil {
 			return nil, err
 		}
 
-		dc.DrawImage(shadow, 0, 0)
+		dc.DrawImage(dst, 0, 0)
 	}
 
 	// Draw rounded rectangle with outline to produce impression of a window
