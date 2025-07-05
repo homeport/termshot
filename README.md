@@ -10,12 +10,12 @@
 Generate beautiful screenshots of your terminal, from your terminal.
 
 ```sh
-termshot --show-cmd -- lolcat -f <(figlet -f big foobar)
+termshot lolcat -f <(figlet -f big termshot)
 ```
 
 This command generates this screenshot:
 
-![example](https://github.com/homeport/termshot/assets/3084745/8ef3a713-70d0-49e3-98e4-e340763dc0b8)
+![example](.doc/example-cmd-figlet.png)
 
 ## Installation
 
@@ -31,23 +31,23 @@ See [Releases](https://github.com/homeport/termshot/releases/) for pre-compiled 
 
 This tool reads the console output and renders an output image that resembles a user interface window. It's inspired by some other web-based tools like [carbon.now.sh](https://carbon.now.sh/), and [codekeep.io/screenshot](https://codekeep.io/screenshot). Unlike those tools, `termshot` does not blindly apply syntax highlighting to some provided text; instead it reads the ANSI escape codes ("rich text") logged by most command-line tools and uses it to generate a high-fidelity "screenshot" of your terminal output.
 
-Like `time`, `watch`, or `perf`, just prefix the command you want to screenshot with `termshot -- `.
+Like `time`, `watch`, or `perf`, just prefix the command you want to screenshot with `termshot`.
 
 ```sh
-termshot -- ls -a
+termshot ls -a
 ```
 
 This will generate an image file called `out.png` in the current directory.
 
-![basic termshot](https://github.com/homeport/termshot/assets/3084745/11b578ee-8106-4e71-a1b8-57bbca4b192f)
+![basic termshot](.doc/example-cmd-ls-a.png)
 
 In some cases, if your target command contains _pipes_—there may still be ambiguity, even with `--`. In these cases, wrap your command in double quotes.
 
 ```sh
-termshot -- "ls -l | grep go"
+termshot -- "ls -1 | grep go"
 ```
 
-![termshot with pipes](https://github.com/homeport/termshot/assets/3084745/5d0dd1ab-820d-46fc-8af7-8a294193c5ca)
+![termshot with pipes](.doc/example-cmd-ls-pipe-grep.png)
 
 ### Flags to control the look
 
@@ -59,7 +59,7 @@ Include the target command in the screenshot.
 termshot --show-cmd -- "ls -a"
 ```
 
-![termshot that shows command](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
+![termshot that shows command](.doc/example-cmd-ls-a.png)
 
 #### `--columns`/`-C`
 
@@ -83,7 +83,7 @@ _Note:_ Only available on some platforms. Check `termshot` help to see if flag i
 
 #### `--filename`/`-f`
 
-Specify a path where the screenshot should be generated. This can be an absolute path or a relative path; relative paths will be resolved relative to the current working directory.
+Specify a path where the screenshot should be generated. This can be an absolute path or a relative path; relative paths will be resolved relative to the current working directory. Defaults to `out.png`.
 
 ```sh
 termshot -- "ls -a" # defaults to <cwd>/out.png
@@ -91,8 +91,6 @@ termshot --filename my-image.png -- "ls -a"
 termshot --filename screenshots/my-image.png -- "ls -a"
 termshot --filename /Desktop/my-image.png -- "ls -a"
 ```
-
-Defaults to `out.png`.
 
 ### Flags to control content
 
@@ -122,8 +120,6 @@ Print the version of `termshot` installed.
 $ termshot --version
 termshot version 0.2.5
 ```
-
-![out](https://github.com/homeport/termshot/assets/3084745/3fbdd952-785d-4865-b216-f33bdaceb4da)
 
 ### Multiple commands
 
