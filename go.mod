@@ -15,7 +15,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.23.4
 	github.com/onsi/gomega v1.37.0
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/image v0.28.0
+	golang.org/x/image v0.29.0
 	golang.org/x/term v0.33.0
 )
 
@@ -32,7 +32,7 @@ require (
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
