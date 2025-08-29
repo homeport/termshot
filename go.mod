@@ -12,7 +12,7 @@ require (
 	github.com/gonvenience/neat v1.3.16
 	github.com/gonvenience/term v1.0.4
 	github.com/mattn/go-isatty v0.0.20
-	github.com/onsi/ginkgo/v2 v2.25.1
+	github.com/onsi/ginkgo/v2 v2.25.2
 	github.com/onsi/gomega v1.38.2
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/image v0.30.0
