@@ -82,6 +82,14 @@ var _ = Describe("Creating images", func() {
 			Expect(scaffold).To(LookLike(testdata("expected-show-cmd.png")))
 		})
 
+		It("should apply margin correctly", func() {
+			scaffold := NewImageCreator()
+			scaffold.SetMargin(24)
+
+			Expect(scaffold.AddContent(strings.NewReader("foobar"))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-margin.png")))
+		})
+
 		It("should write a PNG stream based on provided input with ANSI sequences", func() {
 			var buf bytes.Buffer
 			_, _ = Fprintf(&buf, "Text with emphasis, like *bold*, _italic_, _*bold/italic*_ or ~underline~.\n\n")
