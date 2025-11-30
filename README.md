@@ -73,6 +73,10 @@ Do not draw window decorations (minimize, maximize, and close button).
 
 Do not draw window shadow.
 
+#### `--margin`/`-m`
+
+Add extra space (margin) around the window.
+
 ### Flags for output related settings
 
 #### `--clipboard`/`-b` (only on selected platforms)
