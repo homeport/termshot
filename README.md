@@ -77,6 +77,10 @@ Do not draw window shadow.
 
 Add extra space (margin) around the window.
 
+#### `--padding`/`-p`
+
+Add extra space (padding) around the content inside the window.
+
 ### Flags for output related settings
 
 #### `--clipboard`/`-b` (only on selected platforms)
