@@ -48,7 +48,6 @@ const (
 const (
 	defaultFontSize = 12
 	defaultFontDPI  = 144
-	factor          = 2.0
 )
 
 // commandIndicator is the string to be used to indicate the command in the screenshot
@@ -91,7 +90,7 @@ type Scaffold struct {
 }
 
 func NewImageCreator() Scaffold {
-	f := factor
+	f := 2.0
 
 	fontFaceOptions := &truetype.Options{
 		Size: f * defaultFontSize,
@@ -134,9 +133,9 @@ func (s *Scaffold) SetFontFaceBoldItalic(face imgfont.Face) { s.boldItalic = fac
 
 func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
 
-func (s *Scaffold) SetMargin(margin float64) { s.margin = margin * factor }
+func (s *Scaffold) SetMargin(margin float64) { s.margin = margin * s.factor }
 
-func (s *Scaffold) SetPadding(padding float64) { s.padding = padding * factor }
+func (s *Scaffold) SetPadding(padding float64) { s.padding = padding * s.factor }
 
 func (s *Scaffold) DrawDecorations(value bool) { s.drawDecorations = value }
 
