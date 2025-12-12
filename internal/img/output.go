@@ -133,6 +133,10 @@ func (s *Scaffold) SetFontFaceBoldItalic(face imgfont.Face) { s.boldItalic = fac
 
 func (s *Scaffold) SetColumns(columns int) { s.columns = columns }
 
+func (s *Scaffold) SetMargin(margin float64) { s.margin = margin * s.factor }
+
+func (s *Scaffold) SetPadding(padding float64) { s.padding = padding * s.factor }
+
 func (s *Scaffold) DrawDecorations(value bool) { s.drawDecorations = value }
 
 func (s *Scaffold) DrawShadow(value bool) { s.drawShadow = value }

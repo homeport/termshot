@@ -88,6 +88,22 @@ window including all terminal colors and text decorations.
 			pt.Cols(uint16(columns))
 		}
 
+		// Change margin if requested
+		if margin, err := cmd.Flags().GetInt("margin"); err == nil {
+			if margin < 0 {
+				return fmt.Errorf("margin must be zero or greater: not %d", margin)
+			}
+			scaffold.SetMargin(float64(margin))
+		}
+
+		// Change padding if requested
+		if padding, err := cmd.Flags().GetInt("padding"); err == nil {
+			if padding < 0 {
+				return fmt.Errorf("padding must be zero or greater: not %d", padding)
+			}
+			scaffold.SetPadding(float64(padding))
+		}
+
 		// Disable window shadow if requested
 		//
 		if val, err := cmd.Flags().GetBool("no-shadow"); err == nil {
@@ -288,6 +304,8 @@ func init() {
 	// flags to control look
 	rootCmd.Flags().BoolP("show-cmd", "c", false, "include command in screenshot")
 	rootCmd.Flags().IntP("columns", "C", 0, "force fixed number of columns in screenshot")
+	rootCmd.Flags().IntP("margin", "m", 48, "set margin around the window")
+	rootCmd.Flags().IntP("padding", "p", 24, "set padding around the content inside window")
 	rootCmd.Flags().Bool("no-decoration", false, "do not draw window decorations")
 	rootCmd.Flags().Bool("no-shadow", false, "do not draw window shadow")
 	rootCmd.Flags().BoolP("clip-canvas", "s", false, "clip canvas to visible image area (no margin)")
