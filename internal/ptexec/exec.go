@@ -120,7 +120,9 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 	var errors = []error{}
 
 	// #nosec G204 -- since this is exactly what we want, arbitrary commands
-	pt, err := c.pseudoTerminal(exec.Command(c.name, c.args...))
+	cmd := exec.Command(c.name, c.args...)
+	cmd.Stdin = os.Stdin
+	pt, err := c.pseudoTerminal(cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -144,14 +146,6 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 		}()
 	}
 
-	go func() {
-		defer func() { _ = pt.Close() }()
-		_, copyErr := io.Copy(pt, os.Stdin)
-		if copyErr != nil {
-			errors = append(errors, copyErr)
-		}
-	}()
-
 	var buf bytes.Buffer
 	if err = copy(io.MultiWriter(c.stdout, &buf), pt); err != nil {
 		return nil, err
@@ -169,7 +163,7 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 
 func (c *PseudoTerminal) pseudoTerminal(cmd *exec.Cmd) (*os.File, error) {
 	if c.cols == 0 && c.rows == 0 {
-		return pty.Start(cmd)
+		return pty.StartWithAttrs(cmd, nil, nil)
 	}
 
 	size, err := pty.GetsizeFull(os.Stdout)
@@ -198,7 +192,7 @@ func (c *PseudoTerminal) pseudoTerminal(cmd *exec.Cmd) (*os.File, error) {
 	// With fixed rows/cols, terminal resizing support is not useful
 	c.resize = false
 
-	return pty.StartWithSize(cmd, size)
+	return pty.StartWithAttrs(cmd, size, nil)
 }
 
 func copy(dst io.Writer, src io.Reader) error {
