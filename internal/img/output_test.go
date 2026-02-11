@@ -111,6 +111,30 @@ var _ = Describe("Creating images", func() {
 			Expect(scaffold.AddContent(&buf)).ToNot(HaveOccurred())
 			Expect(scaffold).To(LookLike(testdata("expected-ansi.png")))
 		})
+
+		It("should line up block elements to cells", func() {
+			baseString := `
+				fffffffffff f f f f 
+				ffffffffff b b b b b
+				fffffffffff f f f f 
+				ffffffffff b b b b b
+				fffffffffff f f f f 
+				ffffffffff b b b b b
+				fffffffffff f f f f 
+				ffffffffff b b b b b
+			`
+
+			// Allow nicer indentation for baseString
+			baseString = strings.ReplaceAll(baseString, "\t", "")
+			baseString = strings.TrimSpace(baseString)
+
+			baseString = strings.ReplaceAll(baseString, "f", "█")
+			baseString = strings.ReplaceAll(baseString, "b", "\x1b[31;107m┼\x1b[0m")
+
+			scaffold := NewImageCreator()
+			Expect(scaffold.AddContent(bytes.NewBufferString(baseString))).ToNot(HaveOccurred())
+			Expect(scaffold).To(LookLike(testdata("expected-cells.png")))
+		})
 	})
 
 	Context("Use scaffold to create raw output file", func() {
