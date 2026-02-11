@@ -52,5 +52,14 @@ var _ = Describe("Pseudo Terminal Execute Suite", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(trimmed(out)).To(Equal("12 40"))
 		})
+
+		It("should not truncate the output", func() {
+			out, err := New().Stdout(GinkgoWriter).
+				Command("for c in {a..g}; do echo -n $c; sleep 0.01; done").
+				Run()
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(trimmed(out)).To(Equal("abcdefg"))
+		})
 	})
 })
