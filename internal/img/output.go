@@ -29,6 +29,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -81,12 +82,12 @@ type Scaffold struct {
 	padding float64
 	margin  float64
 
-	regular     imgfont.Face
-	bold        imgfont.Face
-	italic      imgfont.Face
-	boldItalic  imgfont.Face
-	lineSpacing float64
-	tabSpaces   int
+	regular    imgfont.Face
+	bold       imgfont.Face
+	italic     imgfont.Face
+	boldItalic imgfont.Face
+
+	tabSpaces int
 }
 
 func NewImageCreator() Scaffold {
@@ -118,8 +119,7 @@ func NewImageCreator() Scaffold {
 		italic:     font.Hack.Italic(fontFaceOptions),
 		boldItalic: font.Hack.BoldItalic(fontFaceOptions),
 
-		lineSpacing: 1.2,
-		tabSpaces:   2,
+		tabSpaces: 2,
 	}
 }
 
@@ -194,10 +194,6 @@ func (s *Scaffold) AddContent(in io.Reader) error {
 	return nil
 }
 
-func (s *Scaffold) fontHeight() float64 {
-	return float64(s.regular.Metrics().Height >> 6)
-}
-
 func (s *Scaffold) measureContent() (width float64, height float64) {
 	var tmp = make([]rune, len(s.content))
 	for i, cr := range s.content {
@@ -212,25 +208,24 @@ func (s *Scaffold) measureContent() (width float64, height float64) {
 		"\n",
 	)
 
-	// temporary drawer for reference calucation
-	tmpDrawer := &imgfont.Drawer{Face: s.regular}
+	cellWidth, cellHeight := s.cellSize()
 
 	// width, either by using longest line, or by fixed column value
 	switch s.columns {
 	case 0: // unlimited: max width of all lines
 		for _, line := range lines {
-			advance := tmpDrawer.MeasureString(line)
-			if lineWidth := float64(advance >> 6); lineWidth > width {
+			lineWidth := float64(utf8.RuneCountInString(line)) * cellWidth
+			if lineWidth > width {
 				width = lineWidth
 			}
 		}
 
 	default: // fixed: max width based on column count
-		width = float64(tmpDrawer.MeasureString(strings.Repeat("a", s.GetFixedColumns())) >> 6)
+		width = float64(s.GetFixedColumns()) * cellWidth
 	}
 
 	// height, lines times font height and line spacing
-	height = float64(len(lines)) * s.fontHeight() * s.lineSpacing
+	height = float64(len(lines)) * cellHeight
 
 	return width, height
 }
@@ -309,8 +304,11 @@ func (s *Scaffold) image() (image.Image, error) {
 	}
 
 	// Apply the actual text into the prepared content area of the window
-	//
-	var x, y = xOffset + paddingX, yOffset + paddingY + titleOffset + s.fontHeight()
+	var x, y = xOffset + paddingX, yOffset + paddingY + titleOffset
+	w, h := s.cellSize()
+
+	// Convert fixed point to floating point
+	ascent := float64(s.regular.Metrics().Ascent) / (1 << 6)
 	for _, cr := range s.content {
 		switch cr.Settings & 0x1C {
 		case 4:
@@ -327,7 +325,6 @@ func (s *Scaffold) image() (image.Image, error) {
 		}
 
 		str := string(cr.Symbol)
-		w, h := dc.MeasureString(str)
 
 		// background color
 		switch cr.Settings & 0x02 { //nolint:gocritic
@@ -338,7 +335,7 @@ func (s *Scaffold) image() (image.Image, error) {
 				int((cr.Settings>>48)&0xFF), // #nosec G115
 			)
 
-			dc.DrawRectangle(x, y-h+12, w, h)
+			dc.DrawRectangle(x, y, w, h)
 			dc.Fill()
 		}
 
@@ -358,7 +355,7 @@ func (s *Scaffold) image() (image.Image, error) {
 		switch str {
 		case "\n":
 			x = xOffset + paddingX
-			y += h * s.lineSpacing
+			y += math.Floor(h)
 			continue
 
 		case "\t":
@@ -369,12 +366,12 @@ func (s *Scaffold) image() (image.Image, error) {
 			str = "×"
 		}
 
-		dc.DrawString(str, x, y)
+		dc.DrawString(str, x, y+ascent)
 
 		// There seems to be no font face based way to do an underlined
 		// string, therefore manually draw a line under each character
 		if cr.Settings&0x1C == 16 {
-			dc.DrawLine(x, y+f(4), x+w, y+f(4))
+			dc.DrawLine(x, y+h, x+w, y+h)
 			dc.SetLineWidth(f(1))
 			dc.Stroke()
 		}
@@ -383,6 +380,18 @@ func (s *Scaffold) image() (image.Image, error) {
 	}
 
 	return dc.Image(), nil
+}
+
+func (s *Scaffold) cellSize() (float64, float64) {
+	bounds, _, ok := s.regular.GlyphBounds('█')
+	if !ok {
+		panic("An internal font does not support the critical character █")
+	}
+
+	// Round down to force cells to have consistent pixel sizes
+	w := float64((bounds.Max.X - bounds.Min.X).Floor())
+	h := float64((bounds.Max.Y - bounds.Min.Y).Floor())
+	return w, h
 }
 
 // Write writes the scaffold content as PNG into the provided writer
