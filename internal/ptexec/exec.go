@@ -29,6 +29,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"testing"
 
 	"github.com/creack/pty"
 	"github.com/mattn/go-isatty"
@@ -120,7 +121,11 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 	var errors = []error{}
 
 	// #nosec G204 -- since this is exactly what we want, arbitrary commands
-	pt, err := c.pseudoTerminal(exec.Command(c.name, c.args...))
+	cmd := exec.Command(c.name, c.args...)
+	if !testing.Testing() {
+		cmd.Stdin = os.Stdin
+	}
+	pt, err := c.pseudoTerminal(cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -144,14 +149,6 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 		}()
 	}
 
-	go func() {
-		defer func() { _ = pt.Close() }()
-		_, copyErr := io.Copy(pt, os.Stdin)
-		if copyErr != nil {
-			errors = append(errors, copyErr)
-		}
-	}()
-
 	var buf bytes.Buffer
 	if err = copy(io.MultiWriter(c.stdout, &buf), pt); err != nil {
 		return nil, err
@@ -169,14 +166,14 @@ func (c *PseudoTerminal) Run() ([]byte, error) {
 
 func (c *PseudoTerminal) pseudoTerminal(cmd *exec.Cmd) (*os.File, error) {
 	if c.cols == 0 && c.rows == 0 {
-		return pty.Start(cmd)
+		return pty.StartWithAttrs(cmd, nil, nil)
 	}
 
 	size, err := pty.GetsizeFull(os.Stdout)
 	if err != nil {
 		// Obtaining terminal size is prone to error in CI systems, e.g. in
 		// GitHub Action setup or similar, so only fail if CI is not set
-		if !isCI() {
+		if !testing.Testing() {
 			return nil, fmt.Errorf("failed to get size: %w", err)
 		}
 
@@ -198,7 +195,7 @@ func (c *PseudoTerminal) pseudoTerminal(cmd *exec.Cmd) (*os.File, error) {
 	// With fixed rows/cols, terminal resizing support is not useful
 	c.resize = false
 
-	return pty.StartWithSize(cmd, size)
+	return pty.StartWithAttrs(cmd, size, nil)
 }
 
 func copy(dst io.Writer, src io.Reader) error {
@@ -223,9 +220,4 @@ func copy(dst io.Writer, src io.Reader) error {
 func isTerminal(f *os.File) bool {
 	return isatty.IsTerminal(f.Fd()) ||
 		isatty.IsCygwinTerminal(f.Fd())
-}
-
-func isCI() bool {
-	ci, ok := os.LookupEnv("CI")
-	return ok && ci == "true"
 }
