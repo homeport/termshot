@@ -97,6 +97,8 @@ func NewImageCreator() Scaffold {
 		DPI:  defaultFontDPI,
 	}
 
+	fallbacks := loadSystemFallbacks(fontFaceOptions)
+
 	return Scaffold{
 		defaultForegroundColor: bunt.LightGray,
 
@@ -113,10 +115,10 @@ func NewImageCreator() Scaffold {
 		shadowOffsetX:   f * 16,
 		shadowOffsetY:   f * 16,
 
-		regular:    font.Hack.Regular(fontFaceOptions),
-		bold:       font.Hack.Bold(fontFaceOptions),
-		italic:     font.Hack.Italic(fontFaceOptions),
-		boldItalic: font.Hack.BoldItalic(fontFaceOptions),
+		regular:    NewFallbackFace(loadHackPrimary("Hack-Regular.ttf", fontFaceOptions, font.Hack.Regular(fontFaceOptions)), fallbacks...),
+		bold:       NewFallbackFace(loadHackPrimary("Hack-Bold.ttf", fontFaceOptions, font.Hack.Bold(fontFaceOptions)), fallbacks...),
+		italic:     NewFallbackFace(loadHackPrimary("Hack-Italic.ttf", fontFaceOptions, font.Hack.Italic(fontFaceOptions)), fallbacks...),
+		boldItalic: NewFallbackFace(loadHackPrimary("Hack-BoldItalic.ttf", fontFaceOptions, font.Hack.BoldItalic(fontFaceOptions)), fallbacks...),
 
 		lineSpacing: 1.2,
 		tabSpaces:   2,
