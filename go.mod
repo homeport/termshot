@@ -11,7 +11,7 @@ require (
 	github.com/gonvenience/font v0.0.4
 	github.com/gonvenience/neat v1.3.20
 	github.com/gonvenience/term v1.0.5
-	github.com/mattn/go-isatty v0.0.22
+	github.com/mattn/go-isatty v0.0.23
 	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1
 	github.com/spf13/cobra v1.10.2
