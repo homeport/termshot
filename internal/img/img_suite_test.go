@@ -60,6 +60,9 @@ func (m *LookLikeMatcher) Match(actual interface{}) (bool, error) {
 		return false, err
 	}
 
+	// Uncomment to regenerate expected outputs
+	//os.WriteFile(m.path, out.Bytes(), 0666)
+
 	reference, err := os.ReadFile(m.path)
 	if err != nil {
 		return false, err
