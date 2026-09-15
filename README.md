@@ -15,6 +15,7 @@ termshot lolcat -f <(figlet -f big termshot)
 
 This command generates this screenshot:
 
+<!-- termshot:id=example-figlet -->
 ![example](.doc/example-cmd-figlet.png)
 
 ## Installation
@@ -39,6 +40,7 @@ termshot ls -a
 
 This will generate an image file called `out.png` in the current directory.
 
+<!-- termshot:id=example-ls-a -->
 ![basic termshot](.doc/example-cmd-ls-a.png)
 
 In some cases, if your target command contains _pipes_—there may still be ambiguity, even with `--`. In these cases, wrap your command in double quotes.
@@ -47,6 +49,7 @@ In some cases, if your target command contains _pipes_—there may still be ambi
 termshot -- "ls -1 | grep go"
 ```
 
+<!-- termshot:id=example-ls-pipe-grep -->
 ![termshot with pipes](.doc/example-cmd-ls-pipe-grep.png)
 
 ### Flags to control the look
@@ -59,6 +62,7 @@ Include the target command in the screenshot.
 termshot --show-cmd -- "ls -a"
 ```
 
+<!-- termshot:id=example-show-cmd -->
 ![termshot that shows command](.doc/example-cmd-ls-a.png)
 
 #### `--columns`/`-C`
@@ -99,6 +103,37 @@ termshot --filename my-image.png -- "ls -a"
 termshot --filename screenshots/my-image.png -- "ls -a"
 termshot --filename /Desktop/my-image.png -- "ls -a"
 ```
+
+#### `--embed` / `--id` / `--alt`
+
+Write the screenshot and update a markdown file in the same step. Place an HTML comment in the markdown file where the image should live:
+
+```markdown
+<!-- termshot:id=ls-a -->
+```
+
+Then generate the PNG and point `--embed` at that file:
+
+```sh
+termshot --filename docs/ls-a.png --embed README.md --id ls-a -- "ls -a"
+```
+
+`termshot` looks up `<!-- termshot:id=ls-a -->` and:
+
+- replaces the markdown image on the following line, or
+- inserts `![ls-a](docs/ls-a.png)` if there is no image yet.
+
+The image path written into markdown is relative to the markdown file. `--alt` overrides the image alt text; when omitted, an existing alt is kept, otherwise the id is used.
+
+Use a closing comment if the slot should stay a bounded region (everything between the markers is replaced with the image line):
+
+```markdown
+<!-- termshot:id=ls-a -->
+![ls -a](docs/ls-a.png)
+<!-- /termshot -->
+```
+
+If the marker is missing, `termshot` does not append to the file; it exits with an error so the screenshot is not dropped in the wrong section.
 
 ### Flags to control content
 
