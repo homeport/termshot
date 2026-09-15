@@ -32,6 +32,7 @@ import (
 	"github.com/gonvenience/neat"
 
 	"github.com/homeport/termshot/internal/img"
+	"github.com/homeport/termshot/internal/mdembed"
 	"github.com/homeport/termshot/internal/ptexec"
 
 	"github.com/spf13/cobra"
@@ -71,9 +72,26 @@ window including all terminal colors and text decorations.
 
 		rawRead, _ := cmd.Flags().GetString("raw-read")
 		rawWrite, _ := cmd.Flags().GetString("raw-write")
+		embedPath, _ := cmd.Flags().GetString("embed")
+		embedID, _ := cmd.Flags().GetString("id")
+		embedAlt, _ := cmd.Flags().GetString("alt")
 
 		if len(args) == 0 && rawRead == "" {
 			return cmd.Usage()
+		}
+
+		// Optional: Fail early if markdown embed marker is missing
+		//
+		if embedPath != "" {
+			if rawWrite != "" {
+				return fmt.Errorf("--embed cannot be used together with --raw-write")
+			}
+
+			if err := mdembed.ValidateTarget(embedPath, embedID); err != nil {
+				return err
+			}
+		} else if embedID != "" || embedAlt != "" {
+			return fmt.Errorf("--id and --alt can only be used together with --embed")
 		}
 
 		var scaffold = img.NewImageCreator()
@@ -212,7 +230,12 @@ window including all terminal colors and text decorations.
 
 		// Optional: Save image to clipboard
 		//
-		if toClipboard, err := cmd.Flags().GetBool("clipboard"); err == nil && toClipboard {
+		var toClipboard bool
+		if val, err := cmd.Flags().GetBool("clipboard"); err == nil {
+			toClipboard = val
+		}
+
+		if toClipboard && embedPath == "" {
 			return saveToClipboard(scaffold)
 		}
 
@@ -234,7 +257,23 @@ window including all terminal colors and text decorations.
 		}
 
 		defer func() { _ = file.Close() }()
-		return scaffold.WritePNG(file)
+		if err := scaffold.WritePNG(file); err != nil {
+			return err
+		}
+
+		// Optional: Update markdown file with screenshot image
+		//
+		if embedPath != "" {
+			if err := mdembed.UpdateFile(embedPath, embedID, filename, embedAlt); err != nil {
+				return err
+			}
+		}
+
+		if toClipboard && embedPath != "" {
+			return saveToClipboard(scaffold)
+		}
+
+		return nil
 	},
 }
 
@@ -312,6 +351,9 @@ func init() {
 
 	// flags for output related settings
 	rootCmd.Flags().StringP("filename", "f", "out.png", "filename of the screenshot")
+	rootCmd.Flags().String("embed", "", "update markdown file at <!-- termshot:id=... --> marker")
+	rootCmd.Flags().String("id", "", "embed marker id (required with --embed)")
+	rootCmd.Flags().String("alt", "", "alt text for markdown image (optional with --embed)")
 
 	// flags for raw output processing
 	rootCmd.Flags().String("raw-write", "", "write raw output to file instead of creating a screenshot")
