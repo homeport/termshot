@@ -101,6 +101,7 @@ func UpdateFile(markdownPath, id, imagePath, alt string) error {
 		return err
 	}
 
+	// #nosec G703 -- markdown path is the user-provided --embed target
 	if err := os.WriteFile(filepath.Clean(absMarkdown), []byte(updated), info.Mode().Perm()); err != nil {
 		return fmt.Errorf("failed to write markdown file: %w", err)
 	}

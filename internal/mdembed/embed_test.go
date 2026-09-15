@@ -109,7 +109,8 @@ var _ = Describe("Updating markdown files", func() {
 			image := filepath.Join(docs, "shots", "demo.png")
 			Expect(UpdateFile(markdown, "demo", image, "demo")).To(Succeed())
 
-			content, err := os.ReadFile(markdown)
+			// #nosec G304 -- test file is created in a temp directory
+			content, err := os.ReadFile(filepath.Clean(markdown))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(content)).To(Equal("<!-- termshot:id=demo -->\n![demo](shots/demo.png)\n"))
 		})
